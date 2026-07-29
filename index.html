@@ -1,0 +1,350 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+<title>大龙乡红色文化旅游路线图</title>
+<style>
+:root{--red:#C41E3A;--red-dark:#8B1A2B;--gold:#D4A843;--gold-light:#E8D5A3;--bg:#1a1410;--panel:#231f1a;--card:#2a2318;--border:#3a2a1a;--text:#E8DCC8;--text-dim:#9a8c7a;--text-muted:#6a5c4a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+.topbar{background:linear-gradient(180deg,#2a1410,#1e1008);border-bottom:2px solid var(--red);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-icon{font-size:1.4rem}
+.topbar h1{font-size:clamp(1rem,2.5vw,1.3rem);color:var(--gold);letter-spacing:3px;font-weight:800}
+.topbar h1 .sub{display:block;font-size:.65rem;color:var(--text-dim);letter-spacing:2px;font-weight:400;margin-top:2px}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.topbar-badge{font-size:.65rem;color:var(--gold-light);background:rgba(196,30,58,.2);border:1px solid var(--red);padding:3px 10px;border-radius:12px;letter-spacing:2px;white-space:nowrap}
+.btn{border:none;cursor:pointer;font-size:.75rem;padding:6px 14px;border-radius:16px;font-weight:600;letter-spacing:1px;transition:all .2s;white-space:nowrap;font-family:inherit}
+.btn-outline{background:transparent;color:var(--gold-light);border:1px solid var(--gold)}
+.btn-outline:hover{background:rgba(212,168,67,.15)}
+.btn-red{background:var(--red);color:#fff;border:1px solid var(--red)}
+.btn-red:hover{background:var(--red-dark)}
+.btn-green{background:#2d6a2d;color:#fff;border:1px solid #3a8a3a}
+
+.main-layout{display:flex;max-width:1400px;margin:0 auto;min-height:calc(100vh - 120px)}
+.map-col{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:16px}
+.sidebar-col{width:340px;flex-shrink:0;border-left:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 120px);position:sticky;top:60px;background:var(--panel)}
+
+.map-container{position:relative;width:100%;max-width:750px;aspect-ratio:1/1;background-image:url(map.jpg);background-size:contain;background-repeat:no-repeat;background-position:center;border:2px solid var(--border);border-radius:6px;box-shadow:0 4px 40px rgba(0,0,0,.5),0 0 0 1px rgba(196,30,58,.15)}
+.map-hint{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(26,20,16,.85);color:var(--gold);padding:6px 16px;border-radius:16px;font-size:.7rem;letter-spacing:2px;pointer-events:none;z-index:5;border:1px solid var(--border);animation:pulse-text 2s infinite}
+@keyframes pulse-text{0%,100%{opacity:.7}50%{opacity:1}}
+
+.hotspot{position:absolute;width:32px;height:32px;background:var(--red);border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all .3s cubic-bezier(.175,.885,.32,1.275);box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.hotspot .num{color:#fff;font-size:.65rem;font-weight:800;pointer-events:none}
+.hotspot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(196,30,58,.3);animation:pulse-ring 2.5s infinite}
+.hotspot:hover{transform:translate(-50%,-50%) scale(1.25);background:#e74c3c;box-shadow:0 0 24px rgba(231,76,60,.6);z-index:20}
+.hotspot.active{background:var(--gold);border-color:#fff;box-shadow:0 0 30px rgba(212,168,67,.8),0 0 60px rgba(212,168,67,.3);animation:none;z-index:20}
+.hotspot.active::after{animation:none;border-color:rgba(212,168,67,.5)}
+.hotspot.active .num{color:#1a1410}
+.hotspot .tooltip{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);background:var(--card);color:var(--gold);padding:4px 12px;border-radius:4px;font-size:.7rem;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .2s;letter-spacing:1px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hotspot:hover .tooltip{opacity:1}
+@keyframes pulse-ring{0%,100%{transform:scale(.8);opacity:.5}50%{transform:scale(1.4);opacity:0}}
+
+.map-legend{position:absolute;bottom:12px;left:12px;background:rgba(26,20,16,.9);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:.65rem;color:var(--text-dim);letter-spacing:1px;pointer-events:none;z-index:5}
+.map-legend .legend-item{display:flex;align-items:center;gap:6px;margin:3px 0}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-dot.start{background:#4CAF50}.legend-dot.waypoint{background:var(--red)}.legend-dot.end{background:var(--gold)}
+.route-stats{position:absolute;bottom:12px;right:12px;background:rgba(26,20,16,.9);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:.65rem;color:var(--text-dim);letter-spacing:1px;z-index:5;pointer-events:none;text-align:right}
+.route-stats .stat-val{color:var(--gold);font-weight:700;font-size:.8rem}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+
+.sidebar-section{padding:14px 16px;border-bottom:1px solid var(--border)}
+.sidebar-section:last-child{border-bottom:none}
+.sidebar-title{font-size:.75rem;color:var(--gold);letter-spacing:3px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+
+.route-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:4px;border-left:3px solid transparent;animation:slideIn .3s ease forwards;opacity:0}
+.route-card:nth-child(1){animation-delay:.05s}.route-card:nth-child(2){animation-delay:.1s}.route-card:nth-child(3){animation-delay:.15s}.route-card:nth-child(4){animation-delay:.2s}.route-card:nth-child(5){animation-delay:.25s}.route-card:nth-child(6){animation-delay:.3s}
+.route-card:hover{background:rgba(212,168,67,.08)}
+.route-card.active{background:rgba(196,30,58,.12);border-left-color:var(--red)}
+.route-card-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#fff;flex-shrink:0}
+.route-card-num.start{background:#4CAF50}.route-card-num.waypoint{background:var(--red)}.route-card-num.end{background:var(--gold);color:#1a1410}
+.route-card-info{min-width:0}
+.route-card-name{font-size:.85rem;font-weight:700;color:var(--text);letter-spacing:1px}
+.route-card-type{font-size:.65rem;color:var(--text-dim);letter-spacing:1px}
+.route-card-arrow{margin-left:auto;color:var(--text-muted);font-size:.7rem}
+
+.photo-hint{font-size:.65rem;color:var(--text-muted);text-align:center;padding:6px 0;letter-spacing:1px}
+
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--red),var(--gold))}
+.timeline-item{position:relative;margin-bottom:12px;font-size:.7rem;color:var(--text-dim);letter-spacing:1px}
+.timeline-item::before{content:"";position:absolute;left:-17px;top:4px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+.timeline-item:last-child::before{background:var(--gold)}
+.timeline-item strong{color:var(--gold);display:block;font-size:.75rem}
+
+.info-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
+.info-overlay.visible{display:flex}
+.info-dialog{background:var(--panel);border-radius:12px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fadeIn .3s ease}
+.info-dialog-header{position:sticky;top:0;background:linear-gradient(135deg,#2a1410,#1e1008);padding:16px 20px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--red);z-index:1;border-radius:12px 12px 0 0}
+.info-dialog-header h2{font-size:1.2rem;color:var(--gold);letter-spacing:3px}
+.info-dialog-header .badge-row{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.info-dialog-header .badge{font-size:.6rem;padding:2px 8px;border-radius:10px;letter-spacing:1px}
+.badge-red{background:rgba(196,30,58,.3);color:#f08080;border:1px solid var(--red)}
+.badge-gold{background:rgba(212,168,67,.2);color:var(--gold-light);border:1px solid var(--gold)}
+.badge-green{background:rgba(45,106,45,.3);color:#80d080;border:1px solid #3a8a3a}
+.info-dialog-close{background:none;border:none;color:var(--text-dim);font-size:1.5rem;cursor:pointer;padding:0 4px}
+.info-dialog-close:hover{color:var(--red)}
+.info-dialog-body{padding:20px}
+.info-dialog-body .desc{font-size:.9rem;line-height:1.9;color:var(--text);text-align:justify;margin-bottom:16px}
+
+.photo-slider{position:relative;width:100%;aspect-ratio:16/10;background:#0d0a06;border-radius:6px;overflow:hidden;margin-bottom:10px}
+.photo-slider-track{display:flex;height:100%;transition:transform .5s ease}
+.photo-slider-slide{min-width:100%;height:100%;flex-shrink:0;background:#0d0a06}
+.photo-slider-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slider-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--text-dim);letter-spacing:2px}
+.photo-slider-placeholder .ph-icon{font-size:3rem;opacity:.4}
+.photo-slider-placeholder .ph-sub{font-size:.65rem;color:var(--text-muted)}
+.photo-slider-arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;border:none;cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;z-index:5;transition:background .2s}
+.photo-slider-arrow:hover{background:rgba(196,30,58,.7)}
+.photo-slider-arrow.prev{left:8px}.photo-slider-arrow.next{right:8px}
+.photo-slider-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
+.photo-slider-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.6);cursor:pointer;transition:all .2s}
+.photo-slider-dot.active{background:var(--gold);border-color:var(--gold);transform:scale(1.3)}
+.photo-slider-counter{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);color:#fff;font-size:.65rem;padding:3px 8px;border-radius:10px;letter-spacing:1px;z-index:5}
+.photo-slider-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--text-muted);font-size:.8rem;letter-spacing:2px;pointer-events:none}
+.photo-slider-empty .ph-icon{font-size:2.5rem;opacity:.3}
+
+.photo-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:6px;margin-bottom:16px}
+.photo-thumb{aspect-ratio:4/3;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .2s;background:#0d0a06;position:relative}
+.photo-thumb:hover{border-color:var(--gold);transform:scale(1.03)}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-thumb.placeholder{display:flex;align-items:center;justify-content:center;font-size:1.5rem;opacity:.4;cursor:default;border-color:transparent}
+.photo-thumb.placeholder:hover{transform:none;border-color:transparent}
+
+.gallery-hint{font-size:.65rem;color:var(--text-muted);text-align:center;padding:4px 0 8px;letter-spacing:1px}
+
+.lightbox{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.92);align-items:center;justify-content:center;cursor:pointer}
+.lightbox.visible{display:flex}
+.lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:4px}
+.lightbox-close{position:absolute;top:16px;right:20px;color:#fff;font-size:2rem;cursor:pointer;z-index:1}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:2rem;cursor:pointer;padding:20px;z-index:1;user-select:none}
+.lightbox-prev{left:10px}.lightbox-next{right:10px}
+.lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:#fff;font-size:.75rem;background:rgba(0,0,0,.5);padding:4px 12px;border-radius:10px}
+
+.ai-section{border-top:1px solid var(--border);padding-top:14px;margin-top:14px}
+.ai-label{font-size:.7rem;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px}
+.ai-btns{display:flex;gap:6px;flex-wrap:wrap}
+.ai-btn{font-size:.7rem;padding:5px 12px;background:var(--card);color:var(--text-dim);border:1px solid var(--border);border-radius:12px;cursor:pointer;letter-spacing:1px;transition:all .2s;font-family:inherit}
+.ai-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,168,67,.08)}
+.ai-answer{margin-top:10px;padding:12px 16px;background:var(--card);border-left:3px solid var(--red);border-radius:0 4px 4px 0;font-size:.8rem;line-height:1.7;color:var(--text);display:none;animation:fadeIn .3s ease}
+.ai-answer.visible{display:block}
+.ai-answer.loading{color:var(--text-dim);font-style:italic}
+
+.mobile-drawer{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--panel);border-top:2px solid var(--red);border-radius:16px 16px 0 0;max-height:55vh;overflow-y:auto;padding:12px 16px 20px;box-shadow:0 -4px 30px rgba(0,0,0,.5);transform:translateY(100%);transition:transform .3s ease}
+.mobile-drawer.open{transform:translateY(0)}
+.mobile-drawer-handle{width:32px;height:4px;background:var(--text-muted);border-radius:2px;margin:0 auto 10px}
+.mobile-drawer h3{font-size:1rem;color:var(--gold);letter-spacing:2px;text-align:center;margin-bottom:8px}
+.mobile-photos{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px}
+.mobile-photos img{height:100px;border-radius:4px;flex-shrink:0;object-fit:cover}
+
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:149;background:rgba(26,20,16,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:6px 4px env(safe-area-inset-bottom,6px)}
+.mobile-nav-list{display:flex;gap:4px;overflow-x:auto;padding:0 2px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.mobile-nav-list::-webkit-scrollbar{display:none}
+.mobile-nav-item{min-width:72px;padding:6px 8px;text-align:center;border-radius:8px;cursor:pointer;font-size:.6rem;color:var(--text-dim);letter-spacing:1px;border:1px solid transparent;transition:all .2s;scroll-snap-align:start;flex-shrink:0}
+.mobile-nav-item.active{border-color:var(--red);background:rgba(196,30,58,.15);color:var(--gold)}
+.mobile-nav-item-name{font-weight:700;font-size:.7rem}
+
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--card);color:var(--gold);padding:8px 20px;border-radius:20px;font-size:.75rem;letter-spacing:1px;z-index:500;border:1px solid var(--border);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.visible{opacity:1}
+
+.page-footer{text-align:center;padding:12px;color:var(--text-muted);font-size:.6rem;letter-spacing:2px;border-top:1px solid var(--border)}
+
+@media(max-width:900px){
+.main-layout{flex-direction:column}
+.sidebar-col{display:none}
+.map-col{padding:8px}
+.map-container{max-width:100%;border-radius:4px}
+.map-legend,.route-stats{display:none}
+.hotspot{width:26px;height:26px}
+.hotspot .num{font-size:.55rem}
+.hotspot::after{inset:-4px}
+.mobile-nav{display:block}
+.mobile-drawer{display:block}
+.topbar{padding:8px 12px}
+.topbar-badge{display:none}
+.topbar h1{font-size:.9rem}
+.info-dialog{max-width:100%;max-height:90vh;border-radius:12px 12px 0 0}
+.photo-gallery{grid-template-columns:repeat(3,1fr)}
+}
+@media(min-width:901px){.mobile-nav{display:none}.mobile-drawer{display:none}}
+
+.sub-gallery-section{border-top:1px solid var(--border);margin-top:12px;padding-top:12px}
+.sub-gallery-title{font-size:.75rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.sub-gallery-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.sub-gallery-tab{font-size:.68rem;padding:5px 12px;border-radius:14px;cursor:pointer;border:1px solid var(--border);background:var(--card);color:var(--text-dim);transition:all .2s;white-space:nowrap}
+.sub-gallery-tab:hover{color:var(--gold);border-color:var(--gold)}
+.sub-gallery-tab.active{background:var(--red);color:#fff;border-color:var(--red)}
+.sub-gallery-photos{display:flex;gap:8px;overflow-x:auto;padding:4px 0;scroll-behavior:smooth}
+.sub-gallery-photos img{width:100px;height:70px;object-fit:cover;border-radius:4px;cursor:pointer;flex-shrink:0;border:2px solid transparent;transition:all .2s}
+.sub-gallery-photos img:hover{border-color:var(--gold);transform:scale(1.05)}
+.sub-gallery-desc{font-size:.7rem;color:var(--text-dim);margin-top:8px;line-height:1.6}
+@media (max-width:600px){
+.sub-gallery-photos img{width:80px;height:56px}
+.sub-gallery-tab{font-size:.62rem;padding:4px 8px}
+}
+
+
+.sub-gallery-back{display:inline-block;font-size:.68rem;color:var(--gold);cursor:pointer;margin-bottom:8px;padding:3px 10px;border:1px solid var(--gold);border-radius:12px;transition:all .2s}
+.sub-gallery-back:hover{background:rgba(212,168,67,.15);color:#fff}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-left">
+        <span class="topbar-icon">&#128681;</span>
+        <h1>探寻苏区最后的阵地<span class="sub">重走红色足迹，传承苏区精神</span></h1>
+    </div>
+    <div class="topbar-right">
+        <span class="topbar-badge">红色文化 · 绿色山水 · 古村风情</span>
+        <button class="btn btn-outline" id="btnTour" title="自动依次浏览全部点位">&#9654; 自动导览</button>
+        <button class="btn btn-red" id="btnReset" title="回到全局视图">&#128269; 总览</button>
+    </div>
+</div>
+
+<div class="main-layout">
+    <div class="map-col">
+        <div class="map-container" id="mapContainer">
+            <div class="map-hint" id="mapHint">&#128070; 点击地图上的红色标记探索</div>
+            <div class="map-legend">
+                <div class="legend-item"><span class="legend-dot start"></span> 起点：双坪村</div>
+                <div class="legend-item"><span class="legend-dot waypoint"></span> 途经站点</div>
+                <div class="legend-item"><span class="legend-dot end"></span> 终点：红军崖纪念碑</div>
+            </div>
+            <div class="route-stats">
+                <div><span class="stat-val">6</span> 个站点</div>
+                <div><span class="stat-val">~1h28min</span> 全程</div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-col" id="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-title">&#128204; 路线导览 <span style="font-size:.6rem;color:var(--text-muted);margin-left:auto">点击卡片查看</span></div>
+            <div id="routeCards"></div>
+        </div>
+        <div class="sidebar-section">
+            <div class="sidebar-title">&#9203; 历史时间轴</div>
+            <div class="timeline">
+                <div class="timeline-item"><strong>1931年</strong>双坪村成为革命据点</div>
+                <div class="timeline-item"><strong>1933年</strong>李氏宗祠作为红军指挥部</div>
+                <div class="timeline-item"><strong>1933年</strong>大龙乡苏维埃政府成立</div>
+                <div class="timeline-item"><strong>1934年</strong>龙安村一带坚持游击战</div>
+                <div class="timeline-item"><strong>1934年</strong>红军崖阻击战壮烈牺牲</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="info-overlay" id="infoOverlay">
+    <div class="info-dialog">
+        <div class="info-dialog-header">
+            <div>
+                <h2 id="dialogTitle">双坪村</h2>
+                <div class="badge-row">
+                    <span class="badge badge-red" id="dialogTag">#01 红色起点</span>
+                    <span class="badge badge-gold" id="dialogYear">1931年</span>
+                    <span class="badge badge-green" id="dialogPhotoCount">共 0 张照片</span>
+                </div>
+            </div>
+            <button class="info-dialog-close" id="dialogClose" title="关闭 (ESC)">&times;</button>
+        </div>
+        <div class="info-dialog-body">
+            <div class="photo-slider" id="photoSlider">
+                <div class="photo-slider-track" id="sliderTrack"></div>
+                <button class="photo-slider-arrow prev" id="sliderPrev" title="上一张 (&#8592;)">&#8249;</button>
+                <button class="photo-slider-arrow next" id="sliderNext" title="下一张 (&#8594;)">&#8250;</button>
+                <div class="photo-slider-dots" id="sliderDots"></div>
+                <div class="photo-slider-counter" id="sliderCounter">0 / 0</div>
+                <div class="photo-slider-empty" id="sliderEmpty">
+                    <span class="ph-icon">&#128247;</span>
+                    <span>暂无照片</span>
+                    <span style="font-size:.6rem;color:var(--text-muted)">可在 photos 文件夹中添加</span>
+                </div>
+            </div>
+            
+            <div class="sub-gallery-section" id="subGallerySection" style="display:none">
+                <div class="sub-gallery-title">📚 课程活动展示</div>
+                <div class="sub-gallery-tabs" id="subGalleryTabs"></div>
+                <div class="sub-gallery-photos" id="subGalleryPhotos"></div>
+                <div class="sub-gallery-desc" id="subGalleryDesc"></div>
+            </div>
+            <div class="gallery-hint" id="galleryHint">&#128073; 点击缩略图可放大查看 &#128270;</div>
+            <div class="photo-gallery" id="photoGallery"></div>
+            <p class="desc" id="dialogDesc"></p>
+            <div class="ai-section">
+                <div class="ai-label">&#129302; AI 智能问答（需联网）</div>
+                <div class="ai-btns" id="aiBtns">
+                    <button class="ai-btn" data-q="historical">&#128220; 历史背景</button>
+                    <button class="ai-btn" data-q="travel">&#129523; 旅游贴士</button>
+                    <button class="ai-btn" data-q="story">&#128214; 红色故事</button>
+                </div>
+                <div class="ai-answer" id="aiAnswer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+    <span class="lightbox-close" title="关闭">&times;</span>
+    <span class="lightbox-nav lightbox-prev" title="上一张">&#8249;</span>
+    <img id="lightboxImg" src="" alt="">
+    <span class="lightbox-nav lightbox-next" title="下一张">&#8250;</span>
+    <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<div class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-handle"></div>
+    <h3 id="drawerTitle">双坪村</h3>
+    <div class="mobile-photos" id="drawerPhotos"></div>
+    <p style="font-size:.8rem;line-height:1.7;color:var(--text-dim);text-align:justify" id="drawerDesc"></p>
+    <button class="btn btn-green" style="margin-top:10px;width:100%" id="drawerDetailBtn">&#128269; 查看详情与全部照片</button>
+</div>
+
+<div class="mobile-nav"><div class="mobile-nav-list" id="mobileNavList"></div></div>
+<div class="toast" id="toast"></div>
+<div class="page-footer">泰宁县大龙乡红色文化旅游路线图 · 交互式数字导览系统</div>
+
+<script>
+// ============================================================
+// 数据配置 - 修改 SITES 数组来更新点位信息
+// 热点位置: 修改 left/top 百分比值即可调整地图上的标记位置
+// ============================================================
+var SITES = [
+    {id:"01",name:"双坪村",short:"红色起点",type:"起点 · 革命据点",year:"1931",left:"16.8%",top:"84.3%",color:"#4CAF50",
+     desc:"双坪村，位于福建省三明市泰宁县大龙乡，是1931年红军苏区根据地之一。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是红色旅游与绿色发展的典范之地。",
+     photos:[]},
+    {id:"02",name:"李氏宗祠",short:"宗祠展馆",type:"途经站 · 宗祠遗址",year:"1933",left:"29.3%",top:"70%",color:"#C41E3A",
+     desc:"李氏宗祠，位于福建省三明市泰宁县大龙乡，始建于明清时期，承载着深厚的历史底蕴。宗祠内陈列丰富的红色文物，诉说着革命先烈的英勇事迹。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是家族根脉与红色精神交相辉映之地。",
+     photos:["photos/02-李氏宗祠/lishizongci-01.jpg","photos/02-李氏宗祠/lishizongci-02.jpg","photos/02-李氏宗祠/lishizongci-03.jpg","photos/02-李氏宗祠/lishizongci-04.jpg","photos/02-李氏宗祠/lishizongci-05.jpg","photos/02-李氏宗祠/lishizongci-06.jpg"]},
+    {id:"03",name:"苏维埃旧址",short:"革命旧址",type:"途经站 · 政府旧址",year:"1933",left:"40.5%",top:"47%",color:"#C41E3A",
+     desc:"苏维埃旧址，位于福建省三明市泰宁县大龙乡，1933年苏维埃政府诞生地，见证了中国革命的光辉历程。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是一处集红色记忆与自然风光于一体的革命历史遗址。",
+     photos:["photos/03-苏维埃旧址/suweiai-01.jpg","photos/03-苏维埃旧址/suweiai-02.jpg","photos/03-苏维埃旧址/suweiai-03.jpg","photos/03-苏维埃旧址/suweiai-04.jpg","photos/03-苏维埃旧址/suweiai-05.jpg","photos/03-苏维埃旧址/suweiai-06.jpg","photos/03-苏维埃旧址/suweiai-07.jpg","photos/03-苏维埃旧址/suweiai-08.jpg","photos/03-苏维埃旧址/suweiai-09.jpg","photos/03-苏维埃旧址/suweiai-10.jpg","photos/03-苏维埃旧址/suweiai-11.jpg","photos/03-苏维埃旧址/suweiai-12.jpg","photos/03-苏维埃旧址/suweiai-13.jpg"]},
+    {id:"04",name:"大龙乡政府",short:"乡镇中心",type:"途经站 · 乡镇中心",year:"2026",left:"70%",top:"57%",color:"#C41E3A",
+     desc:"大龙乡政府，位于福建省三明市泰宁县大龙乡核心区域，承载着革命先辈的奋斗足迹。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是新时代乡村振兴与红色文旅融合发展的前沿阵地。点击下方课程活动，查看三下乡实践精彩瞬间。",
+     photos:[],
+     subGalleries:[
+         {name:"趣味编程",icon:"💻",desc:"少儿编程启蒙，点燃科技梦想。大龙乡的孩子们在代码世界中探索无限可能。",photos:["photos/04-大龙乡政府/课程展示/编程课堂/coding-01.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-02.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-03.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-04.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-05.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-06.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-07.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-08.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-09.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-10.jpg"]},
+         {name:"VR体验",icon:"🥽",desc:"VR之旅，梦想启航！三明泰宁大龙乡，孩子们热情高涨，共赴虚拟现实探险之旅，开启无限创意之门！",photos:["photos/04-大龙乡政府/课程展示/VR体验/vr-01.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-02.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-03.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-04.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-05.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-06.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-07.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-08.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-09.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-10.jpg"]},
+         {name:"推普课堂",icon:"📖",desc:"推广普通话，传承文化根脉。孩子们在课堂中感受语言之美，增强文化自信。",photos:["photos/04-大龙乡政府/课程展示/推普课堂/language-01.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-02.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-03.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-04.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-05.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-06.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-07.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-08.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-09.jpg"]},
+         {name:"植物拓染",icon:"🌿",desc:"孩子们在福建泰宁体验传统植物拓染，传承文化技艺，热情洋溢，收获满满，让传统文化在指尖绽放！",photos:["photos/04-大龙乡政府/课程展示/植物拓染/dyeing-01.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-02.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-03.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-04.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-05.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-06.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-07.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-08.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-09.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-10.jpg"]},
+         {name:"室外寻宝",icon:"🗺️",desc:"红色主题寻宝互动游戏，孩子们在探索中学习革命历史，寓教于乐，热情高涨。",photos:["photos/04-大龙乡政府/课程展示/寻宝活动/treasure-01.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-02.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-03.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-04.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-05.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-06.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-07.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-08.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-09.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-10.jpg"]},
+         {name:"防溺水教育",icon:"🏊",desc:"暑期福建三明，孩子们在防溺水教育活动中热情高涨，学到了安全知识，守护夏日快乐！",photos:["photos/04-大龙乡政府/课程展示/防溺水教育/safety-01.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-02.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-03.jpg"]}
+     ]},
+    {id:"05",name:"龙安村",short:"古村风情",type:"途经站 · 古村落",year:"1934",left:"61%",top:"70%",color:"#C41E3A",
+     desc:"龙安村，位于福建省三明市泰宁县大龙乡，是一座历史悠久的古村落。村中古建筑保存完好，李火兴纪念馆坐落于此，承载着革命烈士的英勇事迹。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是红色文旅与古村保护协同发展的典范。",
+     photos:["photos/05-龙安村/longan-01.jpg","photos/05-龙安村/longan-02.jpg","photos/05-龙安村/longan-03.jpg","photos/05-龙安村/longan-04.jpg","photos/05-龙安村/longan-05.jpg","photos/05-龙安村/longan-06.jpg","photos/05-龙安村/longan-07.jpg","photos/05-龙安村/longan-08.jpg"]},
+    {id:"06",name:"红军崖纪念碑",short:"红军丰碑",type:"终点 · 战斗遗址",year:"1934",left:"75.5%",top:"26%",color:"#D4A843",
+     desc:"红军崖纪念碑，位于福建省三明市泰宁县大龙乡，是李火兴烈士英勇牺牲之地，铭记着1934年红军艰苦卓绝的斗争岁月。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是缅怀先烈、传承红色基因的重要圣地。",
+     photos:["photos/06-红军崖纪念碑/hongjunya-01.jpg","photos/06-红军崖纪念碑/hongjunya-02.jpg","photos/06-红军崖纪念碑/hongjunya-03.jpg","photos/06-红军崖纪念碑/hongjunya-04.jpg","photos/06-红军崖纪念碑/hongjunya-05.jpg","photos/06-红军崖纪念碑/hongjunya-06.jpg","photos/06-红军崖纪念碑/hongjunya-07.jpg","photos/06-红军崖纪念碑/hongjunya-08.jpg","photos/06-红军崖纪念碑/hongjunya-09.jpg","photos/06-红军崖纪念碑/hongjunya-10.jpg","photos/06-红军崖纪念碑/hongjunya-11.jpg","photos/06-红军崖纪念碑/hongjunya-12.jpg","photos/06-红军崖纪念碑/hongjunya-13.jpg","photos/06-红军崖纪念碑/hongjunya-14.jpg","photos/06-红军崖纪念碑/hongjunya-15.jpg"]}
+];
+</script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
+
