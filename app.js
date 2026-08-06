@@ -35,9 +35,7 @@
     var subGalleryPhotos = $("subGalleryPhotos");
     var subGalleryDesc = $("subGalleryDesc");
 
-    
-    if (sliderPrev) sliderPrev.addEventListener("click", function(e) { slidePrev(e); });
-    if (sliderNext) sliderNext.addEventListener("click", function(e) { slideNext(e); });
+
 var btnTour = $("btnTour");
     var btnReset = $("btnReset");
     var mapHint = $("mapHint");
@@ -50,6 +48,8 @@ var btnTour = $("btnTour");
     var sliderPrev = $("sliderPrev");
     var sliderNext = $("sliderNext");
     var sliderEmpty = $("sliderEmpty");
+    if (sliderPrev) sliderPrev.addEventListener("click", function(e) { slidePrev(e); });
+    if (sliderNext) sliderNext.addEventListener("click", function(e) { slideNext(e); });
 
     // State
     var currentSite = null;
@@ -115,6 +115,25 @@ var btnTour = $("btnTour");
         mapContainer.appendChild(dot);
     });
     console.log("Hotspots: " + SITES.length + " placed");
+
+    // ---- Draw route line through hotspots (in SITES order) ----
+    function drawRouteLine() {
+        var path = document.querySelector("#routeLine path");
+        if (!path) return;
+        var pts = SITES.map(function(s) { return { x: parseFloat(s.left), y: parseFloat(s.top) }; });
+        var d = "M" + pts[0].x + "," + pts[0].y;
+        for (var i = 1; i < pts.length; i++) {
+            var mx = (pts[i-1].x + pts[i].x) / 2;
+            d += " C" + mx + "," + pts[i-1].y + " " + mx + "," + pts[i].y + " " + pts[i].x + "," + pts[i].y;
+        }
+        path.setAttribute("d", d);
+    }
+    drawRouteLine();
+
+    // ---- Fill dynamic route stats ----
+    var statSites = $("statSites"), statPhotos = $("statPhotos");
+    if (statSites) statSites.textContent = SITES.length;
+    if (statPhotos) statPhotos.textContent = SITES.reduce(function(n, s) { return n + (s.photos ? s.photos.length : 0); }, 0);
 
     // ---- Build route cards ----
     SITES.forEach(function(site) {
@@ -518,23 +537,37 @@ function buildPhotoGallery(site) {
         aiAnswer.classList.add("visible", "loading");
         aiAnswer.textContent = "AI \u6B63\u5728\u751F\u6210\u56DE\u7B54...";
 
-        var url = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.zhipuApiUrl) ? APP_CONFIG.zhipuApiUrl : "https://open.bigmodel.cn/api/paas/v4/chat/completions";
         var key = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.zhipuApiKey) ? APP_CONFIG.zhipuApiKey : "";
-
-        if (!key) {
+        var msgs = [{ role: "user", content: prompts[q] }];
+        function renderAI(d) {
             aiAnswer.classList.remove("loading");
-            aiAnswer.textContent = "\u672A\u914D\u7F6E API \u5BC6\u94A5\uFF0C\u8BF7\u5728 config.js \u4E2D\u8BBE\u7F6E\u3002\u5176\u4F59\u529F\u80FD\u6B63\u5E38\u4F7F\u7528\u3002";
-            return;
+            aiAnswer.textContent = d.choices[0].message.content;
         }
-
-        fetch(url, {
+        // \u4F18\u5148\u8D70\u672C\u5730\u4EE3\u7406 (server.py)\uFF0Ckey \u4E0D\u7528\u66B4\u9732\u5728\u6D4F\u89C8\u5668\uFF1B\u4EE3\u7406\u4E0D\u53EF\u7528\u65F6\u56DE\u9000\u76F4\u8FDE
+        fetch("api/ai/ask", {
             method: "POST",
-            headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
-            body: JSON.stringify({ model: "glm-4-flash", messages: [{ role: "user", content: prompts[q] }], temperature: 0.7, max_tokens: 500 })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ messages: msgs })
         })
-        .then(function(r) { return r.json(); })
-        .then(function(d) { aiAnswer.classList.remove("loading"); aiAnswer.textContent = d.choices[0].message.content; })
-        .catch(function() { aiAnswer.classList.remove("loading"); aiAnswer.textContent = "\u62B1\u6B49\uFF0CAI \u56DE\u7B54\u751F\u6210\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u8FDE\u63A5\u3002"; });
+        .then(function(r) { if (!r.ok) throw new Error("proxy unavailable"); return r.json(); })
+        .then(renderAI)
+        .catch(function() {
+            if (!key) {
+                aiAnswer.classList.remove("loading");
+                aiAnswer.textContent = "\u672A\u914D\u7F6E API \u5BC6\u94A5\uFF08config.js \u6216 server.py\uFF09\uFF0C\u5176\u4F59\u529F\u80FD\u6B63\u5E38\u4F7F\u7528\u3002";
+                return;
+            }
+            var url = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.zhipuApiUrl) ? APP_CONFIG.zhipuApiUrl : "https://open.bigmodel.cn/api/paas/v4/chat/completions";
+            var model = (typeof APP_CONFIG !== "undefined" && APP_CONFIG.zhipuModel) ? APP_CONFIG.zhipuModel : "glm-4-flash";
+            fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+                body: JSON.stringify({ model: model, messages: msgs, temperature: 0.7, max_tokens: 500 })
+            })
+            .then(function(r) { return r.json(); })
+            .then(renderAI)
+            .catch(function() { aiAnswer.classList.remove("loading"); aiAnswer.textContent = "\u62B1\u6B49\uFF0CAI \u56DE\u7B54\u751F\u6210\u5931\u8D25\uFF0C\u8BF7\u68C0\u67E5\u7F51\u7EDC\u8FDE\u63A5\u3002"; });
+        });
     });
 
     // ---- Tour mode ----

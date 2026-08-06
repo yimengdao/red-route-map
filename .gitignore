@@ -1,0 +1,16 @@
+# 隐私保护：以下文件可能含 API 密钥，请勿提交
+# 如需使用 AI 问答，密钥填到本地 config.js / server.py 即可，不要 push
+*.env
+.env.*
+config.local.js
+server.local.py
+
+# 临时文件
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+Thumbs.db
+_preview*
+_verify*
+_audit*
