@@ -82,7 +82,7 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 .info-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:20px}
 .info-overlay.visible{display:flex}
 .info-dialog{background:var(--panel);border-radius:12px;max-width:700px;width:100%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);box-shadow:0 20px 60px rgba(0,0,0,.6);animation:fadeIn .3s ease}
-.info-dialog-header{position:sticky;top:0;background:linear-gradient(135deg,#2a1410,#1e1008);padding:16px 20px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--red);z-index:1;border-radius:12px 12px 0 0}
+.info-dialog-header{background:linear-gradient(135deg,#2a1410,#1e1008);padding:16px 20px;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--red);z-index:1;border-radius:12px 12px 0 0}
 .info-dialog-header h2{font-size:1.2rem;color:var(--gold);letter-spacing:3px}
 .info-dialog-header .badge-row{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
 .info-dialog-header .badge{font-size:.6rem;padding:2px 8px;border-radius:10px;letter-spacing:1px}
@@ -95,9 +95,9 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 .info-dialog-body .desc{font-size:.9rem;line-height:1.9;color:var(--text);text-align:justify;margin-bottom:16px}
 
 .photo-slider{position:relative;width:100%;aspect-ratio:16/10;background:#0d0a06;border-radius:6px;overflow:hidden;margin-bottom:10px}
-.photo-slider-track{display:flex;height:100%;transition:transform .5s ease}
-.photo-slider-slide{min-width:100%;height:100%;flex-shrink:0;background:#0d0a06}
-.photo-slider-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-slider-track{display:flex;width:100%;height:100%;transition:transform .5s ease}
+.photo-slider-slide{flex:0 0 100%;min-width:100%;width:100%;height:100%;flex-shrink:0;background:#0d0a06;overflow:hidden}
+.photo-slider-slide img{width:100%;height:100%;object-fit:contain;display:block}
 .photo-slider-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-size:.8rem;color:var(--text-dim);letter-spacing:2px}
 .photo-slider-placeholder .ph-icon{font-size:3rem;opacity:.4}
 .photo-slider-placeholder .ph-sub{font-size:.65rem;color:var(--text-muted)}
@@ -194,6 +194,123 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 .sub-gallery-back{display:inline-block;font-size:.68rem;color:var(--gold);cursor:pointer;margin-bottom:8px;padding:3px 10px;border:1px solid var(--gold);border-radius:12px;transition:all .2s}
 .sub-gallery-back:hover{background:rgba(212,168,67,.15);color:#fff}
 
+
+/* ============ UI 视觉增强（参考 React Bits / Aceternity UI / UI Verse） ============ */
+/* 背景光晕 aurora */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(640px 420px at 12% 8%, rgba(196,30,58,.20), transparent 62%),
+    radial-gradient(520px 400px at 88% 18%, rgba(212,168,67,.14), transparent 60%),
+    radial-gradient(760px 520px at 50% 100%, rgba(45,106,45,.12), transparent 62%);
+  animation:aurora 20s ease-in-out infinite alternate;
+}
+@keyframes aurora{0%{transform:translate(0,0) scale(1)}100%{transform:translate(2%,-2%) scale(1.06)}}
+
+/* 顶栏玻璃拟态 */
+.topbar{background:linear-gradient(180deg,rgba(42,20,16,.90),rgba(30,16,8,.86));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.topbar{border-bottom:1px solid rgba(212,168,67,.22);box-shadow:0 8px 32px rgba(0,0,0,.35)}
+
+/* 页面渐入 */
+.map-col,.sidebar-col{animation:fadeUp .7s cubic-bezier(.16,1,.3,1) both}
+.sidebar-col{animation-delay:.12s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* 地图容器发光边框 */
+.map-container{border-color:rgba(212,168,67,.28);box-shadow:0 4px 50px rgba(0,0,0,.55),0 0 0 1px rgba(196,30,58,.18),0 0 70px rgba(196,30,58,.10)}
+
+/* 热点发光 + 涟漪 */
+.hotspot{box-shadow:0 2px 10px rgba(0,0,0,.5),0 0 0 0 rgba(196,30,58,0)}
+.hotspot:hover{transform:translate(-50%,-50%) scale(1.28);box-shadow:0 0 28px rgba(231,76,60,.75),0 0 48px rgba(231,76,60,.28)}
+.hotspot.active{animation:hot-glow 1.8s ease-in-out infinite}
+@keyframes hot-glow{
+  0%,100%{box-shadow:0 0 18px rgba(212,168,67,.65),0 0 38px rgba(212,168,67,.28)}
+  50%{box-shadow:0 0 32px rgba(212,168,67,.95),0 0 60px rgba(212,168,67,.45)}
+}
+
+/* 按钮 shimmer + 悬浮 */
+.btn{position:relative;overflow:hidden}
+.btn-red::after{content:"";position:absolute;top:0;left:-150%;width:60%;height:100%;background:linear-gradient(120deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);animation:btn-shimmer 3.2s infinite}
+@keyframes btn-shimmer{0%{left:-150%}55%,100%{left:160%}}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+
+/* 对话框玻璃拟态 + 渐变边框 */
+.info-dialog{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(212,168,67,.26);box-shadow:0 28px 90px rgba(0,0,0,.65),0 0 0 1px rgba(196,30,58,.10),0 0 70px rgba(196,30,58,.08)}
+.info-dialog-header{background:linear-gradient(135deg,rgba(196,30,58,.16),transparent 70%)}
+.info-dialog-close{transition:transform .25s ease,color .25s ease}
+.info-dialog-close:hover{transform:rotate(90deg) scale(1.15);color:var(--gold)}
+
+/* 图例玻璃拟态 */
+.map-legend{background:rgba(20,14,10,.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(212,168,67,.22);box-shadow:0 10px 36px rgba(0,0,0,.45)}
+.legend-dot.loading{background:transparent;border:2px solid var(--gold);animation:legend-load 1s ease-in-out infinite}
+@keyframes legend-load{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.45}}
+
+/* 提示徽章 */
+.map-hint{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 4px 24px rgba(0,0,0,.45);border:1px solid rgba(212,168,67,.25)}
+
+/* 路线卡片微交互 */
+.route-card{transition:transform .25s ease,background .25s ease,box-shadow .25s ease}
+.route-card:hover{transform:translateX(5px);background:linear-gradient(90deg,rgba(196,30,58,.14),transparent);box-shadow:0 0 22px rgba(196,30,58,.16)}
+.route-card-arrow{transition:transform .25s ease,color .25s ease}
+.route-card:hover .route-card-arrow{transform:translateX(5px);color:var(--gold)}
+
+/* 轮播箭头 */
+.photo-slider-arrow{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:all .2s ease}
+.photo-slider-arrow:hover{transform:scale(1.12);box-shadow:0 0 18px rgba(212,168,67,.4)}
+
+/* 骨架屏：图片加载中 shimmer */
+.photo-slider-slide{position:relative;background:linear-gradient(100deg,#2a2318 40%,#3a3020 50%,#2a2318 60%);background-size:200% 100%;animation:shimmer 1.4s linear infinite}
+.photo-slider-slide.loaded{background:none;animation:none}
+.photo-slider-slide img{opacity:0;transition:opacity .4s ease;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.35),0 0 0 1px rgba(212,168,67,.15)}
+.photo-slider-slide.loaded img{opacity:1}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* 子相册缩略图占位 */
+.sub-gallery-photos img{background:linear-gradient(100deg,#2a2318 40%,#3a3020 50%,#2a2318 60%);background-size:200% 100%;animation:shimmer 1.4s linear infinite;transition:transform .25s ease,border-color .25s ease}
+.sub-gallery-photos img.loaded{background:none;animation:none}
+.sub-gallery-photos img:hover{border-color:var(--gold);transform:scale(1.06)}
+
+/* 课程标签悬浮 */
+.sub-gallery-tab{transition:all .2s ease}
+.sub-gallery-tab:hover{transform:translateY(-2px);box-shadow:0 0 14px rgba(212,168,67,.28);border-color:var(--gold)}
+
+/* 长介绍可滚动 */
+.desc{max-height:260px;overflow-y:auto;padding-right:8px;line-height:1.9;white-space:pre-line}
+
+/* 灯箱玻璃背景 */
+.lightbox{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* 滚动条美化 */
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--red),var(--gold));border-radius:4px}
+::-webkit-scrollbar-track{background:rgba(26,20,16,.5)}
+
+/* 移动端微调 */
+@media (max-width:600px){
+  .desc{max-height:180px}
+  .topbar{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+}
+
+
+/* 热点名称常显标注 */
+.hotspot-label{
+  position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:rgba(20,14,10,.88);color:var(--gold-light);padding:2px 9px;border-radius:10px;
+  font-size:.62rem;letter-spacing:1px;white-space:nowrap;pointer-events:none;
+  border:1px solid rgba(212,168,67,.35);box-shadow:0 4px 14px rgba(0,0,0,.45);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  z-index:30;transition:all .2s ease;
+}
+.hotspot:hover .hotspot-label{background:rgba(196,30,58,.9);color:#fff;transform:translateX(-50%) translateY(-2px)}
+.hotspot.active .hotspot-label{background:var(--gold);color:#1a1410;border-color:var(--gold)}
+@media (max-width:600px){.hotspot-label{display:none}}
+
+
+/* 轮播自动播放进度条 */
+.slider-progress{position:absolute;bottom:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:0 3px 0 0;z-index:6;pointer-events:none}
+.slider-progress.running{animation:slider-progress 3.5s linear forwards}
+@keyframes slider-progress{from{width:0}to{width:100%}}
+
 </style>
 </head>
 <body>
@@ -218,7 +335,8 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
             <div class="map-legend">
                 <div class="legend-item"><span class="legend-dot start"></span> 起点：双坪村</div>
                 <div class="legend-item"><span class="legend-dot waypoint"></span> 途经站点</div>
-                <div class="legend-item"><span class="legend-dot end"></span> 终点：红军崖纪念碑</div>
+                <div class="legend-item"><span class="legend-dot end"></span> 终点：龙安村部</div>
+                <div class="legend-item"><span class="legend-dot loading"></span> 图片加载中</div>
             </div>
             <div class="route-stats">
                 <div><span class="stat-val" id="statSites">0</span> 个站点</div>
@@ -229,18 +347,8 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
     </div>
     <div class="sidebar-col" id="sidebar">
         <div class="sidebar-section">
-            <div class="sidebar-title">&#128204; 路线导览 <span style="font-size:.6rem;color:var(--text-muted);margin-left:auto">点击卡片查看</span></div>
+            <div class="sidebar-title">📌 路线导览 <span style="font-size:.6rem;color:var(--text-muted);margin-left:auto">点击卡片查看</span></div>
             <div id="routeCards"></div>
-        </div>
-        <div class="sidebar-section">
-            <div class="sidebar-title">&#9203; 历史时间轴</div>
-            <div class="timeline">
-                <div class="timeline-item"><strong>1931年</strong>双坪村成为革命据点</div>
-                <div class="timeline-item"><strong>1933年</strong>李氏宗祠作为红军指挥部</div>
-                <div class="timeline-item"><strong>1933年</strong>大龙乡苏维埃政府成立</div>
-                <div class="timeline-item"><strong>1934年</strong>龙安村一带坚持游击战</div>
-                <div class="timeline-item"><strong>1934年</strong>红军崖阻击战壮烈牺牲</div>
-            </div>
         </div>
     </div>
 </div>
@@ -265,6 +373,7 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
                 <button class="photo-slider-arrow next" id="sliderNext" title="下一张 (&#8594;)">&#8250;</button>
                 <div class="photo-slider-dots" id="sliderDots"></div>
                 <div class="photo-slider-counter" id="sliderCounter">0 / 0</div>
+                <div class="slider-progress" id="sliderProgress"></div>
                 <div class="photo-slider-empty" id="sliderEmpty">
                     <span class="ph-icon">&#128247;</span>
                     <span>暂无照片</span>
@@ -321,13 +430,13 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 // ============================================================
 var SITES = [
     {id:"01",name:"双坪村",short:"红色起点",type:"起点 · 革命据点",year:"1931",left:"16.8%",top:"84.3%",color:"#4CAF50",
-     desc:"双坪村，位于福建省三明市泰宁县大龙乡，是1931年红军苏区根据地之一。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是红色旅游与绿色发展的典范之地。",
+     desc:"泰宁县大龙乡双坪村的李氏宗祠是一座清代的建筑，坐西南朝东北，通面阔13.2米，总进深21.6米，建筑面积23.76平方米。大门砖雕装饰纹样有T形回纹、缠枝花卉纹、如意花卉纹等。\n\n双坪村位于泰宁县大龙乡，是革命老区村、产业发展村、幸福和谐村。80多年前，在这片土地上，革命前辈浴血奋战，军民鱼水情深，留下了不可磨灭的红色印记。",
      photos:[]},
     {id:"02",name:"李氏宗祠",short:"宗祠展馆",type:"途经站 · 宗祠遗址",year:"1933",left:"29.3%",top:"70%",color:"#C41E3A",
-     desc:"李氏宗祠，位于福建省三明市泰宁县大龙乡，始建于明清时期，承载着深厚的历史底蕴。宗祠内陈列丰富的红色文物，诉说着革命先烈的英勇事迹。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是家族根脉与红色精神交相辉映之地。",
+     desc:"李氏宗祠是中共泰宁县委和县苏维埃双坪旧址。双坪村有着深厚的历史底蕴、丰富的非物质文化遗产，双坪人热血男儿英勇抗战、保家卫国的故事，已经流传了上百年，是双坪人的精神寄托。今年以来，该村把文化礼堂建设与精品村建设相结合，在村中新建别具一格的“红色文化礼堂”，将本村红色文化打造成“四廊”展示的特色亮点，向村民展示革命烈士、军人等红色事迹，作为教育当代人爱国爱乡、兴村富民的励志碑。\n\n泰宁县大龙乡双坪村的李氏宗祠是一座清代的建筑，坐西南朝东北，通面阔13.2米，总进深21.6米，建筑面积23.76平方米。大门砖雕装饰纹样有T形回纹、缠枝花卉纹、如意花卉纹等。",
      photos:["photos/02-李氏宗祠/lishizongci-01.png","photos/02-李氏宗祠/lishizongci-02.png","photos/02-李氏宗祠/lishizongci-03.png","photos/02-李氏宗祠/lishizongci-04.png","photos/02-李氏宗祠/lishizongci-05.png","photos/02-李氏宗祠/lishizongci-06.png"]},
     {id:"03",name:"苏维埃旧址",short:"革命旧址",type:"途经站 · 政府旧址",year:"1933",left:"40.5%",top:"47%",color:"#C41E3A",
-     desc:"苏维埃旧址，位于福建省三明市泰宁县大龙乡，为土地革命战争时期苏维埃政权所在地，承载着珍贵的红色记忆。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是一处集红色记忆与自然风光于一体的革命历史遗址。",
+     desc:"中共泰宁县委、泰宁县苏维埃政府大布旧址原为双坪村下坊自然村李氏民宅，属于硬山式木构架砖瓦建筑，面宽约12米，进深10米，为二进式厅堂。旧址已经无人居住。中共泰宁县委、泰宁县苏维埃政府机关旧址同为李氏民宅，木制结构，面宽约15米，进深约12米。当年，中共泰宁县委、泰宁县苏维埃机关工作人员迁移到双坪村时，生活起居就在此屋内，现在仍有村民居住。2006年5月，双坪中共泰宁县委、泰宁县苏维埃政府机关旧址李氏民宅成为大龙乡重要的爱国主义教育基地。\n\n中共泰宁县委、泰宁县苏维埃政府旧址位于泰宁县西南方的大龙乡。中央苏区第五次反“围剿”战争期间，1934年3月，国民党东路军第10纵队汤恩伯部逼近泰宁。3月19日，泰宁县城保卫战正式打响。面对压倒优势的敌人，红军战士和泰宁民众毫不畏惧，浴血奋战。终因寡不敌众，救援的红军未能及时赶到，县城再度沦陷。敌人占据县城后，中共泰宁县委、泰宁县苏维埃政府及部分红军、游击队撤离县城，4月间，经梅口、弋口迁移到大布的双坪村，以双坪、金铙等为基地，组建区委和区苏维埃政府，历时一个多月。5月，中共泰宁县委、泰宁县苏维埃政府撤离大布乡到龙安乡开展工作。期间，中共泰宁县委、泰宁县苏维埃政府动员1200多名青年参加红军，积极筹集军粮，帮助红军挖战壕、修工事、削制竹尖、布置鹿寨、抬担架、救伤病员等等。但在艰苦的斗争环境中，出现了动摇变节分子。1934年7月上旬，龙安区苏维埃政府主席邱贵生动摇变节，暗中与大刀会勾结。7月12日，乘县独立营外出游击，只留下一个班战士防守龙安之机，带领几百名大刀会匪徒夜袭中共泰宁县委、泰宁县苏维埃政府机关驻地。泰宁县苏维埃政府主席严绍成、政治保卫局长李益、妇女部长黄木珠等干部和红军战士十余人被杀害，造成血腥的“龙安事件”。不久，中共泰宁县委、泰宁县苏维埃政府按照中共临时中央书记处书记张闻天的指示，撤销机构，人员全部编入游击队独立营，在建泰边界一带开展敌后游击斗争。泰宁苏区至此结束。",
      photos:["photos/03-苏维埃旧址/suweiai-01.jpg","photos/03-苏维埃旧址/suweiai-02.jpg","photos/03-苏维埃旧址/suweiai-03.jpg","photos/03-苏维埃旧址/suweiai-04.jpg","photos/03-苏维埃旧址/suweiai-05.jpg","photos/03-苏维埃旧址/suweiai-06.jpg","photos/03-苏维埃旧址/suweiai-07.jpg","photos/03-苏维埃旧址/suweiai-08.jpg","photos/03-苏维埃旧址/suweiai-09.jpg","photos/03-苏维埃旧址/suweiai-10.jpg","photos/03-苏维埃旧址/suweiai-11.jpg","photos/03-苏维埃旧址/suweiai-12.jpg"]},
     {id:"04",name:"大龙乡政府",short:"乡镇中心",type:"途经站 · 乡镇中心",year:"2026",left:"70%",top:"57%",color:"#C41E3A",
      desc:"大龙乡政府，位于福建省三明市泰宁县大龙乡核心区域，是新时代乡村振兴与红色文旅融合发展的前沿阵地。这里红色文化厚重，绿色山水环绕，古村风情浓郁。点击下方课程活动，查看三下乡实践精彩瞬间。",
@@ -340,11 +449,11 @@ var SITES = [
          {name:"室外寻宝",icon:"🗺️",desc:"红色主题寻宝互动游戏，孩子们在探索中学习革命历史，寓教于乐，热情高涨。",photos:["photos/04-大龙乡政府/课程展示/寻宝活动/treasure-01.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-02.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-03.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-04.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-05.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-06.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-07.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-08.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-09.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-10.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-11.jpg"]},
          {name:"防溺水教育",icon:"🏊",desc:"暑期福建三明，孩子们在防溺水教育活动中热情高涨，学到了安全知识，守护夏日快乐！",photos:["photos/04-大龙乡政府/课程展示/防溺水教育/safety-01.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-02.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-03.jpg"]}
      ]},
-    {id:"05",name:"龙安村",short:"古村风情",type:"途经站 · 古村落",year:"1934",left:"61%",top:"70%",color:"#C41E3A",
-     desc:"龙安村，位于福建省三明市泰宁县大龙乡，是一座历史悠久的古村落。村中古建筑保存完好，李火兴纪念馆坐落于此，承载着革命烈士的英勇事迹。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是红色文旅与古村保护协同发展的典范。",
+    {id:"05",name:"龙安村",short:"古村风情",type:"终点 · 龙安村部",year:"1934",left:"61%",top:"70%",color:"#D4A843",
+     desc:"龙安村是泰宁苏区最后一块红色阵地。1934年3月18日，国民党军第十纵队汤恩伯的89师，推进到泰宁城东郊的八里桥。当天夜里，中共泰宁县委、县苏维埃政府撤离县城，转移到梅口区坚持斗争；不久，又从梅口区转移到弋口区。4月间，再迁移至大布区；5月，又撤退到龙安区，建立了龙安区委、区苏和龙安、陈坑、张地、李地等4个乡苏。此后，泰宁县委就以这4个乡，连同原先隶属于梅口区委的善溪、官丘坊、双坪、饶山等4个乡苏为基地，配合主力红军作战，并积极开展以收复县城为目标的游击斗争。1934年夏，国民党军和反动民团3000多人马，进犯龙安苏区，妄图把坚持在龙安苏区的红军、游击队和县苏维埃政府及干部一举“剿灭”。为肃清龙安区周围的地主保卫团，泰宁县游击队频繁出击，给予敌人最坚决的打击。同时，县游击队还不断地深入敌占区，袭击国民党零散部队，不断骚扰敌人的进攻。6月21日，泰宁独立营100余人，由龙安出发，袭击官江口之敌，击毙南乡保卫团队长1人、团丁1人；27日上午，独立营袭击弋口邓家坊华光庙，与保卫团、大刀会激战4小时，击溃保卫团几百人，缴枪数十支；7月2日晚，独立营由南洋潭钉竹筏渡过金溪，到江家坪、南洋岗和将乐吴地一带游击，10天中击毙保卫团近百人。游击队、独立营连续不断的胜利，鼓舞了苏区人民战胜敌人的信心，而国民党军和保卫团只好龟缩在据点里，不敢轻意出动。\n\n龙安村系原龙安乡所在地，位于泰宁县南部，是革命老区、苏维埃临时政府所在地，距乡政府所在地18公里。",
      photos:["photos/05-龙安村/longan-01.jpg","photos/05-龙安村/longan-02.jpg","photos/05-龙安村/longan-03.jpg","photos/05-龙安村/longan-04.jpg","photos/05-龙安村/longan-05.jpg","photos/05-龙安村/longan-06.jpg","photos/05-龙安村/longan-07.jpg","photos/05-龙安村/longan-08.jpg"]},
-    {id:"06",name:"红军崖纪念碑",short:"红军丰碑",type:"终点 · 战斗遗址",year:"1934",left:"75.5%",top:"26%",color:"#D4A843",
-     desc:"红军崖纪念碑，位于福建省三明市泰宁县大龙乡，是李火兴烈士英勇牺牲之地，铭记着1934年红军艰苦卓绝的斗争岁月。这里红色文化厚重，绿色山水环绕，古村风情浓郁，是缅怀先烈、传承红色基因的重要圣地。",
+    {id:"06",name:"红军崖纪念碑",short:"红军丰碑",type:"纪念地 · 战斗遗址",year:"1934",left:"75.5%",top:"26%",color:"#C41E3A",
+     desc:"红军崖位于龙安村。1934年初夏，国民党军和反动民团集中3000多人马，大举进犯龙安苏区，妄图把从县城转移到龙安一带坚持革命斗争的泰宁县委、县苏维埃政府及红军游击队一网打尽。6月26日，县委、县政府机关干部和红军游击队共100多人被敌人团团围困在龙安桥头不远的高山上。敌人开始放火烧山，情况十分危急。年仅15岁的通讯员李火兴与两个班的战士一起坚守阵地，阻击敌人，掩护队伍向建宁方向转移。在阻击任务完成后，为了吸引敌人，让战友们安全撤离险境，已经受伤的李火兴主动要求只身留下拖住敌人。他把敌人引向远处的红石崖，利用一挺机枪、几颗手榴弹和满山的石头，打退了敌人一次又一次的进攻，最后身负重伤，弹尽粮绝，怀抱着机枪毅然跳下红石崖，壮烈牺牲！解放后，龙安人民为了纪念英勇牺牲的红军小战士李火兴，便把“白石崖”改名为“红军崖”，并在崖下建起了烈士纪念碑。",
      photos:["photos/06-红军崖纪念碑/hongjunya-01.jpg","photos/06-红军崖纪念碑/hongjunya-02.png","photos/06-红军崖纪念碑/hongjunya-03.png","photos/06-红军崖纪念碑/hongjunya-04.png","photos/06-红军崖纪念碑/hongjunya-05.jpg","photos/06-红军崖纪念碑/hongjunya-06.jpg","photos/06-红军崖纪念碑/hongjunya-07.jpg","photos/06-红军崖纪念碑/hongjunya-08.jpg","photos/06-红军崖纪念碑/hongjunya-09.jpg","photos/06-红军崖纪念碑/hongjunya-10.jpg","photos/06-红军崖纪念碑/hongjunya-11.jpg","photos/06-红军崖纪念碑/hongjunya-12.jpg","photos/06-红军崖纪念碑/hongjunya-13.jpg","photos/06-红军崖纪念碑/hongjunya-14.jpg","photos/06-红军崖纪念碑/hongjunya-15.jpg","photos/06-红军崖纪念碑/hongjunya-16.jpg","photos/06-红军崖纪念碑/hongjunya-17.jpg","photos/06-红军崖纪念碑/hongjunya-18.jpg","photos/06-红军崖纪念碑/hongjunya-19.jpg","photos/06-红军崖纪念碑/hongjunya-20.jpg","photos/06-红军崖纪念碑/hongjunya-21.jpg"]}
 ];
 </script>

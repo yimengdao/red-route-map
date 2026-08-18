@@ -7,6 +7,17 @@
 
     // ---- DOM refs ----
     var $ = function(id) { return document.getElementById(id); };
+
+    // 图片加载完成 -> 移除骨架屏并淡入（增强视觉）
+    document.addEventListener("load", function(e) {
+        var t = e.target;
+        if (t && t.tagName === "IMG") {
+            t.classList.add("loaded");
+            var slide = t.closest(".photo-slider-slide");
+            if (slide) slide.classList.add("loaded");
+        }
+    }, true);
+
     var mapContainer = $("mapContainer");
     var infoOverlay = $("infoOverlay");
     var dialogTitle = $("dialogTitle");
@@ -48,6 +59,7 @@ var btnTour = $("btnTour");
     var sliderPrev = $("sliderPrev");
     var sliderNext = $("sliderNext");
     var sliderEmpty = $("sliderEmpty");
+    var sliderProgress = $("sliderProgress");
     if (sliderPrev) sliderPrev.addEventListener("click", function(e) { slidePrev(e); });
     if (sliderNext) sliderNext.addEventListener("click", function(e) { slideNext(e); });
 
@@ -61,6 +73,11 @@ var btnTour = $("btnTour");
     function startSliderAutoplay() {
         stopSliderAutoplay();
         if (sldTotal <= 1) return;
+        if (sliderProgress) {
+            sliderProgress.classList.remove("running");
+            void sliderProgress.offsetWidth;
+            sliderProgress.classList.add("running");
+        }
         sliderAutoplay = setInterval(function() {
             sldIdx = (sldIdx + 1) % sldTotal;
             sliderTrack.style.transform = "translateX(-" + (sldIdx * 100) + "%)";
@@ -71,6 +88,7 @@ var btnTour = $("btnTour");
 
     function stopSliderAutoplay() {
         if (sliderAutoplay) { clearInterval(sliderAutoplay); sliderAutoplay = null; }
+        if (sliderProgress) { sliderProgress.classList.remove("running"); sliderProgress.style.width = "0"; }
     }
 
     function updateSliderDots() {
@@ -110,7 +128,7 @@ var btnTour = $("btnTour");
         dot.setAttribute("data-id", site.id);
         dot.style.left = site.left;
         dot.style.top = site.top;
-        dot.innerHTML = '<span class="num">' + site.id + '</span><span class="tooltip">' + site.name + '</span>';
+        dot.innerHTML = '<span class="num">' + site.id + '</span><span class="hotspot-label">' + site.name + '</span><span class="tooltip">' + site.name + '</span>';
         dot.addEventListener("click", function() { selectSite(site.id); });
         mapContainer.appendChild(dot);
     });
@@ -140,7 +158,7 @@ var btnTour = $("btnTour");
         var card = document.createElement("div");
         card.className = "route-card";
         card.setAttribute("data-id", site.id);
-        var nc = site.id === "01" ? "start" : (site.id === "06" ? "end" : "waypoint");
+        var nc = site.id === "01" ? "start" : (site.id === "05" ? "end" : "waypoint");
         card.innerHTML = '<div class="route-card-num ' + nc + '">' + site.id + '</div>' +
             '<div class="route-card-info"><div class="route-card-name">' + site.name + '</div>' +
             '<div class="route-card-type">' + site.type + '</div></div>' +
@@ -244,11 +262,22 @@ var btnTour = $("btnTour");
         // Add back button
         var backBtn = document.createElement("span");
         backBtn.className = "sub-gallery-back";
-        backBtn.textContent = "← 收起";
+        backBtn.textContent = "← 收起课程";
         backBtn.addEventListener("click", function(e) {
             e.stopPropagation();
-            if (subGallerySection) subGallerySection.style.display = "none";
-            if (photoSlider) photoSlider.scrollIntoView({ behavior: "smooth" });
+            var collapsed = subGallerySection.classList.toggle("collapsed");
+            if (collapsed) {
+                subGalleryTabs.style.display = "none";
+                subGalleryPhotos.style.display = "none";
+                if (subGalleryDesc) subGalleryDesc.style.display = "none";
+                backBtn.textContent = "▶ 展开课程";
+                if (photoSlider) photoSlider.scrollIntoView({ behavior: "smooth" });
+            } else {
+                subGalleryTabs.style.display = "flex";
+                subGalleryPhotos.style.display = "flex";
+                if (subGalleryDesc) subGalleryDesc.style.display = "block";
+                backBtn.textContent = "← 收起课程";
+            }
         });
         subGallerySection.insertBefore(backBtn, subGallerySection.firstChild);
 
