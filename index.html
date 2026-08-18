@@ -23,7 +23,7 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 .btn-red:hover{background:var(--red-dark)}
 .btn-green{background:#2d6a2d;color:#fff;border:1px solid #3a8a3a}
 
-.main-layout{display:flex;max-width:1400px;margin:0 auto;min-height:calc(100vh - 120px)}
+.main-layout{display:flex;max-width:1740px;margin:0 auto;min-height:calc(100vh - 120px);gap:10px}
 .map-col{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;padding:16px}
 .sidebar-col{width:340px;flex-shrink:0;border-left:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 120px);position:sticky;top:60px;background:var(--panel)}
 
@@ -137,7 +137,7 @@ body{font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;backg
 .ai-answer.visible{display:block}
 .ai-answer.loading{color:var(--text-dim);font-style:italic}
 
-.mobile-drawer{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--panel);border-top:2px solid var(--red);border-radius:16px 16px 0 0;max-height:55vh;overflow-y:auto;padding:12px 16px 20px;box-shadow:0 -4px 30px rgba(0,0,0,.5);transform:translateY(100%);transition:transform .3s ease}
+.mobile-drawer{display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;background:var(--panel);border-top:2px solid var(--red);border-radius:16px 16px 0 0;max-height:62vh;overflow-y:auto;padding:12px 16px 20px;box-shadow:0 -4px 30px rgba(0,0,0,.5);transform:translateY(100%);transition:transform .3s ease}
 .mobile-drawer.open{transform:translateY(0)}
 .mobile-drawer-handle{width:32px;height:4px;background:var(--text-muted);border-radius:2px;margin:0 auto 10px}
 .mobile-drawer h3{font-size:1rem;color:var(--gold);letter-spacing:2px;text-align:center;margin-bottom:8px}
@@ -308,8 +308,63 @@ body::before{
 
 /* 轮播自动播放进度条 */
 .slider-progress{position:absolute;bottom:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:0 3px 0 0;z-index:6;pointer-events:none}
-.slider-progress.running{animation:slider-progress 3.5s linear forwards}
+.slider-progress.running{animation:slider-progress 6s linear forwards}
 @keyframes slider-progress{from{width:0}to{width:100%}}
+
+
+/* 点位切换条 */
+.site-switch{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px;padding:6px 8px;background:rgba(212,168,67,.06);border:1px solid rgba(212,168,67,.18);border-radius:8px}
+.site-switch-btn{flex:1;max-width:120px;font-size:.72rem;padding:6px 10px;border-radius:14px;border:1px solid var(--border);background:var(--card);color:var(--gold-light);cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:1px}
+.site-switch-btn:hover{border-color:var(--gold);background:rgba(212,168,67,.12);color:var(--gold)}
+.site-switch-info{font-size:.65rem;color:var(--text-muted);letter-spacing:2px;white-space:nowrap}
+
+/* 左侧信息栏（桌面端） */
+.side-info{width:280px;flex-shrink:0;padding:16px 8px 16px 16px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 120px);overflow-y:auto;position:sticky;top:60px}
+.info-card{background:linear-gradient(160deg,var(--panel),var(--card));border:1px solid var(--border);border-radius:10px;padding:14px 16px;box-shadow:0 6px 24px rgba(0,0,0,.28)}
+.info-card-title{font-size:.75rem;color:var(--gold);letter-spacing:2px;margin-bottom:8px;display:flex;align-items:center;gap:6px;font-weight:700}
+.info-card-text{font-size:.72rem;color:var(--text-dim);line-height:1.85;text-align:justify}
+.info-stats{display:flex;gap:8px;margin-top:12px}
+.info-stats>div{flex:1;text-align:center;background:rgba(196,30,58,.10);border:1px solid rgba(196,30,58,.22);border-radius:8px;padding:8px 4px}
+.info-stats span{display:block;font-size:1.15rem;font-weight:800;color:var(--gold)}
+.info-stats em{font-style:normal;font-size:.58rem;color:var(--text-muted);letter-spacing:1px}
+.guide-list{list-style:none;counter-reset:g;margin:0}
+.guide-list li{font-size:.7rem;color:var(--text-dim);line-height:1.75;padding-left:26px;position:relative;margin-bottom:6px}
+.guide-list li::before{counter-increment:g;content:counter(g);position:absolute;left:0;top:2px;width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+@media(max-width:1200px){.side-info{display:none}}
+
+/* 移动端降低滚动卡顿 */
+@media(max-width:900px){
+.topbar{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
+
+
+/* 移动端抽屉：头部关闭按钮 */
+.mobile-drawer-head{display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:8px}
+.mobile-drawer-head h3{margin-bottom:0}
+.mobile-drawer-close{position:absolute;right:0;top:50%;transform:translateY(-50%);background:rgba(196,30,58,.15);border:1px solid var(--red);color:#f08080;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:.78rem;line-height:1;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2}
+.mobile-drawer-close:hover{background:var(--red);color:#fff}
+.mobile-drawer-handle{cursor:grab}
+.mobile-drawer.dragging{transition:none}
+
+/* 抽屉遮罩：点外部关闭 */
+.drawer-scrim{display:none;position:fixed;inset:0;z-index:148;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+.drawer-scrim.visible{display:block}
+
+/* 抽屉自动轮播 */
+.drawer-carousel{aspect-ratio:16/10;margin-bottom:10px;background:#0d0a06}
+.drawer-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;color:var(--text-muted);font-size:.72rem;letter-spacing:1px;text-align:center;padding:12px}
+
+/* 轮播播放/暂停按钮 */
+.slider-play-toggle{position:absolute;top:10px;left:12px;z-index:6;background:rgba(0,0,0,.55);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:50%;width:30px;height:30px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.slider-play-toggle:hover{background:rgba(196,30,58,.7)}
+
+/* 图片加载失败占位 */
+.photo-slider-slide.img-error{background:linear-gradient(135deg,#2a1a14,#1a1008)}
+.photo-slider-slide.img-error::after{content:"\1F4F7 图片加载失败";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.75rem;letter-spacing:1px}
+
+/* 轮播轨道：横滑给轮播，竖滑留给页面滚动 */
+.photo-slider-track{touch-action:pan-y}
+@media (max-width:600px){.mobile-drawer{max-height:60vh}}
 
 </style>
 </head>
@@ -328,6 +383,30 @@ body::before{
 </div>
 
 <div class="main-layout">
+    <aside class="side-info" id="sideInfo">
+        <div class="info-card">
+            <div class="info-card-title">&#128214; 走进大龙乡</div>
+            <p class="info-card-text">泰宁县大龙乡，位于福建省三明市，是一片承载厚重红色记忆的土地。1934年，中共泰宁县委、县苏维埃政府辗转迁入，在这片土地上坚持斗争，书写了苏区最后的红色篇章。</p>
+            <div class="info-stats">
+                <div><span id="statSites2">0</span><em>个站点</em></div>
+                <div><span id="statPhotos2">0</span><em>张照片</em></div>
+                <div><span>6</span><em>段红色记忆</em></div>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="info-card-title">&#129514; 使用指引</div>
+            <ol class="guide-list">
+                <li><b>点击地图热点</b> 或右侧路线卡片查看点位详情</li>
+                <li><b>滑动轮播</b> 浏览照片，点击缩略图可放大</li>
+                <li><b>自动导览</b> 一键依次浏览全部点位</li>
+            </ol>
+        </div>
+        <div class="info-card">
+            <div class="info-card-title">&#128205; 推荐动线</div>
+            <p class="info-card-text">沿金色虚线自 <b style="color:var(--gold)">双坪村</b> 出发，经 <b style="color:var(--gold)">李氏宗祠</b>、<b style="color:var(--gold)">苏维埃旧址</b>、<b style="color:var(--gold)">大龙乡政府</b>，抵 <b style="color:var(--gold)">龙安村部</b>，最后登临 <b style="color:var(--gold)">红军崖纪念碑</b>。</p>
+        </div>
+    </aside>
+
     <div class="map-col">
         <div class="map-container" id="mapContainer">
             <div class="map-hint" id="mapHint">&#128070; 点击地图上的红色标记探索</div>
@@ -367,6 +446,12 @@ body::before{
             <button class="info-dialog-close" id="dialogClose" title="关闭 (ESC)">&times;</button>
         </div>
         <div class="info-dialog-body">
+            <div class="site-switch" id="dialogSwitch">
+                <button class="site-switch-btn" id="dialogPrevSite" title="上一个点位">&#8249; 上一个</button>
+                <span class="site-switch-info" id="dialogSwitchInfo">1 / 6</span>
+                <button class="site-switch-btn" id="dialogNextSite" title="下一个点位">下一个 &#8250;</button>
+            </div>
+
             <div class="photo-slider" id="photoSlider">
                 <div class="photo-slider-track" id="sliderTrack"></div>
                 <button class="photo-slider-arrow prev" id="sliderPrev" title="上一张 (&#8592;)">&#8249;</button>
@@ -374,10 +459,11 @@ body::before{
                 <div class="photo-slider-dots" id="sliderDots"></div>
                 <div class="photo-slider-counter" id="sliderCounter">0 / 0</div>
                 <div class="slider-progress" id="sliderProgress"></div>
+                <button class="slider-play-toggle" id="sliderPlayToggle" title="暂停/继续自动播放">&#9208;</button>
                 <div class="photo-slider-empty" id="sliderEmpty">
                     <span class="ph-icon">&#128247;</span>
                     <span>暂无照片</span>
-                    <span style="font-size:.6rem;color:var(--text-muted)">可在 photos 文件夹中添加</span>
+                    <span style="font-size:.6rem;color:var(--text-muted)">可在 photos_web 文件夹中添加</span>
                 </div>
             </div>
             
@@ -411,9 +497,26 @@ body::before{
     <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
+<div class="drawer-scrim" id="drawerScrim" title="点击关闭"></div>
 <div class="mobile-drawer" id="mobileDrawer">
-    <div class="mobile-drawer-handle"></div>
-    <h3 id="drawerTitle">双坪村</h3>
+    <div class="mobile-drawer-handle" id="drawerHandle"></div>
+    <div class="mobile-drawer-head">
+        <h3 id="drawerTitle">双坪村</h3>
+        <button class="mobile-drawer-close" id="drawerCloseBtn" title="关闭并返回地图">&#10005;</button>
+    </div>
+    <div class="site-switch" id="drawerSwitch">
+        <button class="site-switch-btn" id="drawerPrevSite">&#8249; 上一个</button>
+        <span class="site-switch-info" id="drawerSwitchInfo">1 / 6</span>
+        <button class="site-switch-btn" id="drawerNextSite">下一个 &#8250;</button>
+    </div>
+    <div class="photo-slider drawer-carousel" id="drawerCarousel">
+        <div class="photo-slider-track" id="drawerSliderTrack"></div>
+        <button class="photo-slider-arrow prev" id="drawerSliderPrev" title="上一张">&#8249;</button>
+        <button class="photo-slider-arrow next" id="drawerSliderNext" title="下一张">&#8250;</button>
+        <div class="photo-slider-dots" id="drawerSliderDots"></div>
+        <div class="photo-slider-counter" id="drawerSliderCounter">0 / 0</div>
+        <button class="slider-play-toggle" id="drawerPlayToggle" title="暂停/继续自动播放">&#9208;</button>
+    </div>
     <div class="mobile-photos" id="drawerPhotos"></div>
     <p style="font-size:.8rem;line-height:1.7;color:var(--text-dim);text-align:justify" id="drawerDesc"></p>
     <button class="btn btn-green" style="margin-top:10px;width:100%" id="drawerDetailBtn">&#128269; 查看详情与全部照片</button>
@@ -431,30 +534,30 @@ body::before{
 var SITES = [
     {id:"01",name:"双坪村",short:"红色起点",type:"起点 · 革命据点",year:"1931",left:"16.8%",top:"84.3%",color:"#4CAF50",
      desc:"泰宁县大龙乡双坪村的李氏宗祠是一座清代的建筑，坐西南朝东北，通面阔13.2米，总进深21.6米，建筑面积23.76平方米。大门砖雕装饰纹样有T形回纹、缠枝花卉纹、如意花卉纹等。\n\n双坪村位于泰宁县大龙乡，是革命老区村、产业发展村、幸福和谐村。80多年前，在这片土地上，革命前辈浴血奋战，军民鱼水情深，留下了不可磨灭的红色印记。",
-     photos:["photos/01-双坪村/shuangping-01.jpg"]},
+     photos:["photos_web/01-双坪村/shuangping-01.jpg"]},
     {id:"02",name:"李氏宗祠",short:"宗祠展馆",type:"途经站 · 宗祠遗址",year:"1933",left:"29.3%",top:"70%",color:"#C41E3A",
      desc:"李氏宗祠是中共泰宁县委和县苏维埃双坪旧址。双坪村有着深厚的历史底蕴、丰富的非物质文化遗产，双坪人热血男儿英勇抗战、保家卫国的故事，已经流传了上百年，是双坪人的精神寄托。今年以来，该村把文化礼堂建设与精品村建设相结合，在村中新建别具一格的“红色文化礼堂”，将本村红色文化打造成“四廊”展示的特色亮点，向村民展示革命烈士、军人等红色事迹，作为教育当代人爱国爱乡、兴村富民的励志碑。\n\n泰宁县大龙乡双坪村的李氏宗祠是一座清代的建筑，坐西南朝东北，通面阔13.2米，总进深21.6米，建筑面积23.76平方米。大门砖雕装饰纹样有T形回纹、缠枝花卉纹、如意花卉纹等。",
-     photos:["photos/02-李氏宗祠/lishizongci-01.png","photos/02-李氏宗祠/lishizongci-02.png","photos/02-李氏宗祠/lishizongci-03.png","photos/02-李氏宗祠/lishizongci-04.png","photos/02-李氏宗祠/lishizongci-05.png","photos/02-李氏宗祠/lishizongci-06.png"]},
+     photos:["photos_web/02-李氏宗祠/lishizongci-01.jpg","photos_web/02-李氏宗祠/lishizongci-02.jpg","photos_web/02-李氏宗祠/lishizongci-03.jpg","photos_web/02-李氏宗祠/lishizongci-04.jpg","photos_web/02-李氏宗祠/lishizongci-05.jpg","photos_web/02-李氏宗祠/lishizongci-06.jpg"]},
     {id:"03",name:"苏维埃旧址",short:"革命旧址",type:"途经站 · 政府旧址",year:"1933",left:"40.5%",top:"47%",color:"#C41E3A",
      desc:"中共泰宁县委、泰宁县苏维埃政府大布旧址原为双坪村下坊自然村李氏民宅，属于硬山式木构架砖瓦建筑，面宽约12米，进深10米，为二进式厅堂。旧址已经无人居住。中共泰宁县委、泰宁县苏维埃政府机关旧址同为李氏民宅，木制结构，面宽约15米，进深约12米。当年，中共泰宁县委、泰宁县苏维埃机关工作人员迁移到双坪村时，生活起居就在此屋内，现在仍有村民居住。2006年5月，双坪中共泰宁县委、泰宁县苏维埃政府机关旧址李氏民宅成为大龙乡重要的爱国主义教育基地。\n\n中共泰宁县委、泰宁县苏维埃政府旧址位于泰宁县西南方的大龙乡。中央苏区第五次反“围剿”战争期间，1934年3月，国民党东路军第10纵队汤恩伯部逼近泰宁。3月19日，泰宁县城保卫战正式打响。面对压倒优势的敌人，红军战士和泰宁民众毫不畏惧，浴血奋战。终因寡不敌众，救援的红军未能及时赶到，县城再度沦陷。敌人占据县城后，中共泰宁县委、泰宁县苏维埃政府及部分红军、游击队撤离县城，4月间，经梅口、弋口迁移到大布的双坪村，以双坪、金铙等为基地，组建区委和区苏维埃政府，历时一个多月。5月，中共泰宁县委、泰宁县苏维埃政府撤离大布乡到龙安乡开展工作。期间，中共泰宁县委、泰宁县苏维埃政府动员1200多名青年参加红军，积极筹集军粮，帮助红军挖战壕、修工事、削制竹尖、布置鹿寨、抬担架、救伤病员等等。但在艰苦的斗争环境中，出现了动摇变节分子。1934年7月上旬，龙安区苏维埃政府主席邱贵生动摇变节，暗中与大刀会勾结。7月12日，乘县独立营外出游击，只留下一个班战士防守龙安之机，带领几百名大刀会匪徒夜袭中共泰宁县委、泰宁县苏维埃政府机关驻地。泰宁县苏维埃政府主席严绍成、政治保卫局长李益、妇女部长黄木珠等干部和红军战士十余人被杀害，造成血腥的“龙安事件”。不久，中共泰宁县委、泰宁县苏维埃政府按照中共临时中央书记处书记张闻天的指示，撤销机构，人员全部编入游击队独立营，在建泰边界一带开展敌后游击斗争。泰宁苏区至此结束。",
-     photos:["photos/03-苏维埃旧址/suweiai-01.jpg","photos/03-苏维埃旧址/suweiai-02.jpg","photos/03-苏维埃旧址/suweiai-03.jpg","photos/03-苏维埃旧址/suweiai-04.jpg","photos/03-苏维埃旧址/suweiai-05.jpg","photos/03-苏维埃旧址/suweiai-06.jpg","photos/03-苏维埃旧址/suweiai-07.jpg","photos/03-苏维埃旧址/suweiai-08.jpg","photos/03-苏维埃旧址/suweiai-09.jpg","photos/03-苏维埃旧址/suweiai-10.jpg","photos/03-苏维埃旧址/suweiai-11.jpg","photos/03-苏维埃旧址/suweiai-12.jpg","photos/03-苏维埃旧址/suweiai-13.jpg","photos/03-苏维埃旧址/suweiai-14.jpg","photos/03-苏维埃旧址/suweiai-15.jpg","photos/03-苏维埃旧址/suweiai-16.jpg","photos/03-苏维埃旧址/suweiai-17.jpg","photos/03-苏维埃旧址/suweiai-18.jpg","photos/03-苏维埃旧址/suweiai-19.jpg","photos/03-苏维埃旧址/suweiai-20.jpg","photos/03-苏维埃旧址/suweiai-21.jpg","photos/03-苏维埃旧址/suweiai-22.jpg","photos/03-苏维埃旧址/suweiai-23.jpg"]},
+     photos:["photos_web/03-苏维埃旧址/suweiai-01.jpg","photos_web/03-苏维埃旧址/suweiai-02.jpg","photos_web/03-苏维埃旧址/suweiai-03.jpg","photos_web/03-苏维埃旧址/suweiai-04.jpg","photos_web/03-苏维埃旧址/suweiai-05.jpg","photos_web/03-苏维埃旧址/suweiai-06.jpg","photos_web/03-苏维埃旧址/suweiai-07.jpg","photos_web/03-苏维埃旧址/suweiai-08.jpg","photos_web/03-苏维埃旧址/suweiai-09.jpg","photos_web/03-苏维埃旧址/suweiai-10.jpg","photos_web/03-苏维埃旧址/suweiai-11.jpg","photos_web/03-苏维埃旧址/suweiai-12.jpg","photos_web/03-苏维埃旧址/suweiai-13.jpg","photos_web/03-苏维埃旧址/suweiai-14.jpg","photos_web/03-苏维埃旧址/suweiai-15.jpg","photos_web/03-苏维埃旧址/suweiai-16.jpg","photos_web/03-苏维埃旧址/suweiai-17.jpg","photos_web/03-苏维埃旧址/suweiai-18.jpg","photos_web/03-苏维埃旧址/suweiai-19.jpg","photos_web/03-苏维埃旧址/suweiai-20.jpg","photos_web/03-苏维埃旧址/suweiai-21.jpg","photos_web/03-苏维埃旧址/suweiai-22.jpg","photos_web/03-苏维埃旧址/suweiai-23.jpg"]},
     {id:"04",name:"大龙乡政府",short:"乡镇中心",type:"途经站 · 乡镇中心",year:"2026",left:"70%",top:"57%",color:"#C41E3A",
      desc:"大龙乡政府，位于福建省三明市泰宁县大龙乡核心区域，是新时代乡村振兴与红色文旅融合发展的前沿阵地。这里红色文化厚重，绿色山水环绕，古村风情浓郁。点击下方课程活动，查看三下乡实践精彩瞬间。",
      photos:[],
      subGalleries:[
-         {name:"趣味编程",icon:"💻",desc:"少儿编程启蒙，点燃科技梦想。大龙乡的孩子们在代码世界中探索无限可能。",photos:["photos/04-大龙乡政府/课程展示/编程课堂/coding-01.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-02.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-03.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-04.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-05.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-06.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-07.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-08.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-09.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-10.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-11.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-12.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-13.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-14.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-15.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-16.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-17.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-18.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-19.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-20.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-21.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-22.jpg","photos/04-大龙乡政府/课程展示/编程课堂/coding-23.jpg"]},
-         {name:"VR体验",icon:"🥽",desc:"VR之旅，梦想启航！三明泰宁大龙乡，孩子们热情高涨，共赴虚拟现实探险之旅，开启无限创意之门！",photos:["photos/04-大龙乡政府/课程展示/VR体验/vr-01.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-02.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-03.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-04.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-05.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-06.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-07.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-08.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-09.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-10.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-11.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-12.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-13.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-14.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-15.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-16.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-17.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-18.jpg","photos/04-大龙乡政府/课程展示/VR体验/vr-19.jpg"]},
-         {name:"推普课堂",icon:"📖",desc:"推广普通话，传承文化根脉。孩子们在课堂中感受语言之美，增强文化自信。",photos:["photos/04-大龙乡政府/课程展示/推普课堂/language-01.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-02.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-03.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-04.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-05.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-06.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-07.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-08.jpg","photos/04-大龙乡政府/课程展示/推普课堂/language-09.jpg"]},
-         {name:"植物拓染",icon:"🌿",desc:"孩子们在福建泰宁体验传统植物拓染，传承文化技艺，热情洋溢，收获满满，让传统文化在指尖绽放！",photos:["photos/04-大龙乡政府/课程展示/植物拓染/dyeing-01.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-02.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-03.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-04.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-05.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-06.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-07.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-08.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-09.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-10.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-11.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-12.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-13.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-14.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-15.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-16.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-17.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-18.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-19.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-20.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-21.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-22.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-23.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-24.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-25.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-26.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-27.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-28.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-29.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-30.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-31.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-32.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-33.jpg","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-34.png","photos/04-大龙乡政府/课程展示/植物拓染/dyeing-35.png"]},
-         {name:"室外寻宝",icon:"🗺️",desc:"红色主题寻宝互动游戏，孩子们在探索中学习革命历史，寓教于乐，热情高涨。",photos:["photos/04-大龙乡政府/课程展示/寻宝活动/treasure-01.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-02.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-03.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-04.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-05.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-06.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-07.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-08.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-09.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-10.jpg","photos/04-大龙乡政府/课程展示/寻宝活动/treasure-11.jpg"]},
-         {name:"防溺水教育",icon:"🏊",desc:"暑期福建三明，孩子们在防溺水教育活动中热情高涨，学到了安全知识，守护夏日快乐！",photos:["photos/04-大龙乡政府/课程展示/防溺水教育/safety-01.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-02.jpg","photos/04-大龙乡政府/课程展示/防溺水教育/safety-03.jpg"]}
+         {name:"趣味编程",icon:"💻",desc:"少儿编程启蒙，点燃科技梦想。大龙乡的孩子们在代码世界中探索无限可能。",photos:["photos_web/04-大龙乡政府/课程展示/编程课堂/coding-01.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-02.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-03.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-04.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-05.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-06.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-07.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-08.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-09.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-10.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-11.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-12.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-13.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-14.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-15.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-16.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-17.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-18.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-19.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-20.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-21.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-22.jpg","photos_web/04-大龙乡政府/课程展示/编程课堂/coding-23.jpg"]},
+         {name:"VR体验",icon:"🥽",desc:"VR之旅，梦想启航！三明泰宁大龙乡，孩子们热情高涨，共赴虚拟现实探险之旅，开启无限创意之门！",photos:["photos_web/04-大龙乡政府/课程展示/VR体验/vr-01.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-02.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-03.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-04.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-05.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-06.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-07.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-08.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-09.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-10.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-11.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-12.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-13.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-14.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-15.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-16.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-17.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-18.jpg","photos_web/04-大龙乡政府/课程展示/VR体验/vr-19.jpg"]},
+         {name:"推普课堂",icon:"📖",desc:"推广普通话，传承文化根脉。孩子们在课堂中感受语言之美，增强文化自信。",photos:["photos_web/04-大龙乡政府/课程展示/推普课堂/language-01.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-02.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-03.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-04.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-05.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-06.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-07.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-08.jpg","photos_web/04-大龙乡政府/课程展示/推普课堂/language-09.jpg"]},
+         {name:"植物拓染",icon:"🌿",desc:"孩子们在福建泰宁体验传统植物拓染，传承文化技艺，热情洋溢，收获满满，让传统文化在指尖绽放！",photos:["photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-01.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-02.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-03.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-04.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-05.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-06.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-07.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-08.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-09.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-10.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-11.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-12.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-13.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-14.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-15.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-16.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-17.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-18.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-19.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-20.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-21.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-22.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-23.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-24.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-25.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-26.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-27.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-28.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-29.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-30.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-31.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-32.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-33.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-34.jpg","photos_web/04-大龙乡政府/课程展示/植物拓染/dyeing-35.jpg"]},
+         {name:"室外寻宝",icon:"🗺️",desc:"红色主题寻宝互动游戏，孩子们在探索中学习革命历史，寓教于乐，热情高涨。",photos:["photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-01.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-02.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-03.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-04.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-05.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-06.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-07.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-08.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-09.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-10.jpg","photos_web/04-大龙乡政府/课程展示/寻宝活动/treasure-11.jpg"]},
+         {name:"防溺水教育",icon:"🏊",desc:"暑期福建三明，孩子们在防溺水教育活动中热情高涨，学到了安全知识，守护夏日快乐！",photos:["photos_web/04-大龙乡政府/课程展示/防溺水教育/safety-01.jpg","photos_web/04-大龙乡政府/课程展示/防溺水教育/safety-02.jpg","photos_web/04-大龙乡政府/课程展示/防溺水教育/safety-03.jpg"]}
      ]},
     {id:"05",name:"龙安村",short:"古村风情",type:"终点 · 龙安村部",year:"1934",left:"61%",top:"70%",color:"#D4A843",
      desc:"龙安村是泰宁苏区最后一块红色阵地。1934年3月18日，国民党军第十纵队汤恩伯的89师，推进到泰宁城东郊的八里桥。当天夜里，中共泰宁县委、县苏维埃政府撤离县城，转移到梅口区坚持斗争；不久，又从梅口区转移到弋口区。4月间，再迁移至大布区；5月，又撤退到龙安区，建立了龙安区委、区苏和龙安、陈坑、张地、李地等4个乡苏。此后，泰宁县委就以这4个乡，连同原先隶属于梅口区委的善溪、官丘坊、双坪、饶山等4个乡苏为基地，配合主力红军作战，并积极开展以收复县城为目标的游击斗争。1934年夏，国民党军和反动民团3000多人马，进犯龙安苏区，妄图把坚持在龙安苏区的红军、游击队和县苏维埃政府及干部一举“剿灭”。为肃清龙安区周围的地主保卫团，泰宁县游击队频繁出击，给予敌人最坚决的打击。同时，县游击队还不断地深入敌占区，袭击国民党零散部队，不断骚扰敌人的进攻。6月21日，泰宁独立营100余人，由龙安出发，袭击官江口之敌，击毙南乡保卫团队长1人、团丁1人；27日上午，独立营袭击弋口邓家坊华光庙，与保卫团、大刀会激战4小时，击溃保卫团几百人，缴枪数十支；7月2日晚，独立营由南洋潭钉竹筏渡过金溪，到江家坪、南洋岗和将乐吴地一带游击，10天中击毙保卫团近百人。游击队、独立营连续不断的胜利，鼓舞了苏区人民战胜敌人的信心，而国民党军和保卫团只好龟缩在据点里，不敢轻意出动。\n\n龙安村系原龙安乡所在地，位于泰宁县南部，是革命老区、苏维埃临时政府所在地，距乡政府所在地18公里。",
-     photos:["photos/05-龙安村/longan-01.jpg","photos/05-龙安村/longan-02.jpg","photos/05-龙安村/longan-03.jpg","photos/05-龙安村/longan-04.jpg","photos/05-龙安村/longan-05.jpg","photos/05-龙安村/longan-06.jpg","photos/05-龙安村/longan-07.jpg","photos/05-龙安村/longan-08.jpg","photos/05-龙安村/longan-09.jpg","photos/05-龙安村/longan-10.jpg","photos/05-龙安村/longan-11.jpg"]},
+     photos:["photos_web/05-龙安村/longan-01.jpg","photos_web/05-龙安村/longan-02.jpg","photos_web/05-龙安村/longan-03.jpg","photos_web/05-龙安村/longan-04.jpg","photos_web/05-龙安村/longan-05.jpg","photos_web/05-龙安村/longan-06.jpg","photos_web/05-龙安村/longan-07.jpg","photos_web/05-龙安村/longan-08.jpg","photos_web/05-龙安村/longan-09.jpg","photos_web/05-龙安村/longan-10.jpg","photos_web/05-龙安村/longan-11.jpg"]},
     {id:"06",name:"红军崖纪念碑",short:"红军丰碑",type:"纪念地 · 战斗遗址",year:"1934",left:"75.5%",top:"26%",color:"#C41E3A",
      desc:"红军崖位于龙安村。1934年初夏，国民党军和反动民团集中3000多人马，大举进犯龙安苏区，妄图把从县城转移到龙安一带坚持革命斗争的泰宁县委、县苏维埃政府及红军游击队一网打尽。6月26日，县委、县政府机关干部和红军游击队共100多人被敌人团团围困在龙安桥头不远的高山上。敌人开始放火烧山，情况十分危急。年仅15岁的通讯员李火兴与两个班的战士一起坚守阵地，阻击敌人，掩护队伍向建宁方向转移。在阻击任务完成后，为了吸引敌人，让战友们安全撤离险境，已经受伤的李火兴主动要求只身留下拖住敌人。他把敌人引向远处的红石崖，利用一挺机枪、几颗手榴弹和满山的石头，打退了敌人一次又一次的进攻，最后身负重伤，弹尽粮绝，怀抱着机枪毅然跳下红石崖，壮烈牺牲！解放后，龙安人民为了纪念英勇牺牲的红军小战士李火兴，便把“白石崖”改名为“红军崖”，并在崖下建起了烈士纪念碑。",
-     photos:["photos/06-红军崖纪念碑/hongjunya-01.jpg","photos/06-红军崖纪念碑/hongjunya-02.png","photos/06-红军崖纪念碑/hongjunya-03.png","photos/06-红军崖纪念碑/hongjunya-04.png","photos/06-红军崖纪念碑/hongjunya-05.jpg","photos/06-红军崖纪念碑/hongjunya-06.jpg","photos/06-红军崖纪念碑/hongjunya-07.jpg","photos/06-红军崖纪念碑/hongjunya-08.jpg","photos/06-红军崖纪念碑/hongjunya-09.jpg","photos/06-红军崖纪念碑/hongjunya-10.jpg","photos/06-红军崖纪念碑/hongjunya-11.jpg","photos/06-红军崖纪念碑/hongjunya-12.jpg","photos/06-红军崖纪念碑/hongjunya-13.jpg","photos/06-红军崖纪念碑/hongjunya-14.jpg","photos/06-红军崖纪念碑/hongjunya-15.jpg","photos/06-红军崖纪念碑/hongjunya-16.jpg","photos/06-红军崖纪念碑/hongjunya-17.jpg","photos/06-红军崖纪念碑/hongjunya-18.jpg","photos/06-红军崖纪念碑/hongjunya-19.jpg","photos/06-红军崖纪念碑/hongjunya-20.jpg","photos/06-红军崖纪念碑/hongjunya-21.jpg","photos/06-红军崖纪念碑/hongjunya-22.jpg","photos/06-红军崖纪念碑/hongjunya-23.jpg","photos/06-红军崖纪念碑/hongjunya-24.jpg","photos/06-红军崖纪念碑/hongjunya-25.jpg","photos/06-红军崖纪念碑/hongjunya-26.jpg"]}
+     photos:["photos_web/06-红军崖纪念碑/hongjunya-01.jpg","photos_web/06-红军崖纪念碑/hongjunya-02.jpg","photos_web/06-红军崖纪念碑/hongjunya-03.jpg","photos_web/06-红军崖纪念碑/hongjunya-04.jpg","photos_web/06-红军崖纪念碑/hongjunya-05.jpg","photos_web/06-红军崖纪念碑/hongjunya-06.jpg","photos_web/06-红军崖纪念碑/hongjunya-07.jpg","photos_web/06-红军崖纪念碑/hongjunya-08.jpg","photos_web/06-红军崖纪念碑/hongjunya-09.jpg","photos_web/06-红军崖纪念碑/hongjunya-10.jpg","photos_web/06-红军崖纪念碑/hongjunya-11.jpg","photos_web/06-红军崖纪念碑/hongjunya-12.jpg","photos_web/06-红军崖纪念碑/hongjunya-13.jpg","photos_web/06-红军崖纪念碑/hongjunya-14.jpg","photos_web/06-红军崖纪念碑/hongjunya-15.jpg","photos_web/06-红军崖纪念碑/hongjunya-16.jpg","photos_web/06-红军崖纪念碑/hongjunya-17.jpg","photos_web/06-红军崖纪念碑/hongjunya-18.jpg","photos_web/06-红军崖纪念碑/hongjunya-19.jpg","photos_web/06-红军崖纪念碑/hongjunya-20.jpg","photos_web/06-红军崖纪念碑/hongjunya-21.jpg","photos_web/06-红军崖纪念碑/hongjunya-22.jpg","photos_web/06-红军崖纪念碑/hongjunya-23.jpg","photos_web/06-红军崖纪念碑/hongjunya-24.jpg","photos_web/06-红军崖纪念碑/hongjunya-25.jpg","photos_web/06-红军崖纪念碑/hongjunya-26.jpg"]}
 ];
 </script>
 <script src="config.js"></script>

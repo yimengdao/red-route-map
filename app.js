@@ -40,6 +40,23 @@
     var mobileNavList = $("mobileNavList");
     var routeCards = $("routeCards");
     var toast = $("toast");
+    var dialogPrevSite = $("dialogPrevSite");
+    var dialogNextSite = $("dialogNextSite");
+    var dialogSwitchInfo = $("dialogSwitchInfo");
+    var drawerPrevSite = $("drawerPrevSite");
+    var drawerNextSite = $("drawerNextSite");
+    var drawerSwitchInfo = $("drawerSwitchInfo");
+    var drawerCarousel = $("drawerCarousel");
+    var drawerSliderTrack = $("drawerSliderTrack");
+    var drawerSliderDots = $("drawerSliderDots");
+    var drawerSliderCounter = $("drawerSliderCounter");
+    var drawerSliderPrev = $("drawerSliderPrev");
+    var drawerSliderNext = $("drawerSliderNext");
+    var drawerPlayToggle = $("drawerPlayToggle");
+    var drawerCloseBtn = $("drawerCloseBtn");
+    var drawerScrim = $("drawerScrim");
+    var drawerHandle = $("drawerHandle");
+    var sliderPlayToggle = $("sliderPlayToggle");
     // Sub-gallery refs
     var subGallerySection = $("subGallerySection");
     var subGalleryTabs = $("subGalleryTabs");
@@ -62,6 +79,9 @@ var btnTour = $("btnTour");
     var sliderProgress = $("sliderProgress");
     if (sliderPrev) sliderPrev.addEventListener("click", function(e) { slidePrev(e); });
     if (sliderNext) sliderNext.addEventListener("click", function(e) { slideNext(e); });
+    if (sliderPlayToggle) sliderPlayToggle.addEventListener("click", function() {
+        if (sliderAutoplay) { stopSliderAutoplay(); } else { startSliderAutoplay(); }
+    });
 
     // State
     var currentSite = null;
@@ -78,17 +98,20 @@ var btnTour = $("btnTour");
             void sliderProgress.offsetWidth;
             sliderProgress.classList.add("running");
         }
+        if (sliderPlayToggle) sliderPlayToggle.textContent = "\u23F8";
         sliderAutoplay = setInterval(function() {
             sldIdx = (sldIdx + 1) % sldTotal;
             sliderTrack.style.transform = "translateX(-" + (sldIdx * 100) + "%)";
             sliderCounter.textContent = (sldIdx + 1) + " / " + sldTotal;
             updateSliderDots();
-        }, 3500);
+            ensureSlideLoaded(sldIdx);
+        }, 6000);
     }
 
     function stopSliderAutoplay() {
         if (sliderAutoplay) { clearInterval(sliderAutoplay); sliderAutoplay = null; }
         if (sliderProgress) { sliderProgress.classList.remove("running"); sliderProgress.style.width = "0"; }
+        if (sliderPlayToggle) sliderPlayToggle.textContent = "\u25B6";
     }
 
     function updateSliderDots() {
@@ -152,6 +175,9 @@ var btnTour = $("btnTour");
     var statSites = $("statSites"), statPhotos = $("statPhotos");
     if (statSites) statSites.textContent = SITES.length;
     if (statPhotos) statPhotos.textContent = SITES.reduce(function(n, s) { return n + (s.photos ? s.photos.length : 0); }, 0);
+    var statSites2 = $("statSites2"), statPhotos2 = $("statPhotos2");
+    if (statSites2) statSites2.textContent = SITES.length;
+    if (statPhotos2) statPhotos2.textContent = SITES.reduce(function(n, s) { return n + (s.photos ? s.photos.length : 0); }, 0);
 
     // ---- Build route cards ----
     SITES.forEach(function(site) {
@@ -197,6 +223,12 @@ var btnTour = $("btnTour");
         if (ac) ac.classList.add("active");
         var ai = document.querySelector('.mobile-nav-item[data-id="' + id + '"]');
         if (ai) { ai.classList.add("active"); ai.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }
+
+        // 更新点位切换指示
+        var _ci = SITES.findIndex(function(s) { return s.id === id; });
+        var _pos = (_ci >= 0 ? _ci + 1 : 1) + " / " + SITES.length;
+        if (dialogSwitchInfo) dialogSwitchInfo.textContent = _pos;
+        if (drawerSwitchInfo) drawerSwitchInfo.textContent = _pos;
 
         if (subGallerySection) { subGallerySection.style.display = (site.id === "04") ? "block" : "none"; }
         if (isMobile) { showMobileDrawer(site); } else { showInfoDialog(site); }
@@ -332,7 +364,7 @@ var btnTour = $("btnTour");
             var img = document.createElement("img");
             img.src = src;
             img.alt = sg.name + " - " + (i + 1);
-            img.loading = "lazy";
+            img.loading = "lazy"; img.decoding = "async";
             img.style.cursor = "pointer";
             (function(idx) {
                 img.addEventListener("click", function(e) {
@@ -347,12 +379,27 @@ var btnTour = $("btnTour");
         }
     }
 
+    // ---- 轮播按需加载：仅加载当前与下一张，降低首屏流量 ----
+    function ensureSlideLoaded(i) {
+        if (!sliderTrack || sldTotal === 0) return;
+        [i, i + 1].forEach(function(n) {
+            if (n < 0 || n >= sldTotal) return;
+            var slide = sliderTrack.children[n];
+            if (!slide) return;
+            var img = slide.querySelector("img");
+            if (img && img.getAttribute("data-src") && !img.getAttribute("src")) {
+                img.src = img.getAttribute("data-src");
+            }
+        });
+    }
+
     // ---- Build photo slider ----
     function buildPhotoSlider(site) {
         if (!sliderTrack || !sliderDots || !sliderCounter || !sliderEmpty) {
             console.error("Slider DOM missing!");
             return;
         }
+        stopSliderAutoplay();
         sliderTrack.innerHTML = "";
         sliderDots.innerHTML = "";
         sldIdx = 0;
@@ -382,9 +429,9 @@ var btnTour = $("btnTour");
             var slide = document.createElement("div");
             slide.className = "photo-slider-slide";
             var img = document.createElement("img");
-            img.src = src;
+            img.setAttribute("data-src", src);
             img.alt = site.name + " - " + (i + 1);
-            img.loading = "lazy";
+            img.decoding = "async";
             img.style.cursor = "pointer";
             (function(idx) {
                 img.addEventListener("click", function(e) {
@@ -392,6 +439,8 @@ var btnTour = $("btnTour");
                     openLightbox(site.photos, idx);
                 });
                 img.addEventListener("error", function() {
+                    var sl = this.closest(".photo-slider-slide");
+                    if (sl) sl.classList.add("img-error");
                     this.style.display = "none";
                 });
             })(i);
@@ -408,6 +457,7 @@ var btnTour = $("btnTour");
 
         sldTotal = maxSlides;
         sliderCounter.textContent = "1 / " + sldTotal;
+        ensureSlideLoaded(0);
         startSliderAutoplay();
 
         // Touch swipe
@@ -416,7 +466,6 @@ var btnTour = $("btnTour");
         sliderTrack.addEventListener("touchend", function(e) {
             var diff = tsX - e.changedTouches[0].screenX;
             if (Math.abs(diff) > 50) { if (diff > 0) slideNext(e); else slidePrev(e); }
-            startSliderAutoplay();
         }, {passive: true});
     }
     function goToSlide(idx) {
@@ -425,8 +474,8 @@ var btnTour = $("btnTour");
         sliderTrack.style.transform = "translateX(-" + (sldIdx * 100) + "%)";
         sliderCounter.textContent = (sldIdx + 1) + " / " + sldTotal;
         updateSliderDots();
+        ensureSlideLoaded(sldIdx);
         stopSliderAutoplay();
-        startSliderAutoplay();
     }
 
     function slidePrev(e) {
@@ -437,7 +486,7 @@ var btnTour = $("btnTour");
         sliderTrack.style.transform = "translateX(-" + (sldIdx * 100) + "%)";
         sliderCounter.textContent = (sldIdx + 1) + " / " + sldTotal;
         updateSliderDots();
-        startSliderAutoplay();
+        ensureSlideLoaded(sldIdx);
     }
 
     function slideNext(e) {
@@ -448,7 +497,7 @@ var btnTour = $("btnTour");
         sliderTrack.style.transform = "translateX(-" + (sldIdx * 100) + "%)";
         sliderCounter.textContent = (sldIdx + 1) + " / " + sldTotal;
         updateSliderDots();
-        startSliderAutoplay();
+        ensureSlideLoaded(sldIdx);
     }
 
 function buildPhotoGallery(site) {
@@ -464,7 +513,7 @@ function buildPhotoGallery(site) {
                 ph.title = "\u6682\u65E0\u7167\u7247";
                 photoGallery.appendChild(ph);
             }
-            if (galleryHint) galleryHint.textContent = "\u{1F4F7} \u8BE5\u5730\u70B9\u6682\u65E0\u7167\u7247\uFF0C\u53EF\u5728 photos \u6587\u4EF6\u5939\u4E2D\u6DFB\u52A0";
+            if (galleryHint) galleryHint.textContent = "\u{1F4F7} \u8BE5\u5730\u70B9\u6682\u65E0\u7167\u7247\uFF0C\u53EF\u5728 photos_web \u6587\u4EF6\u5939\u4E2D\u6DFB\u52A0";
         } else {
             site.photos.forEach(function(src, idx) {
                 var ph = document.createElement("div");
@@ -472,7 +521,7 @@ function buildPhotoGallery(site) {
                 var img = document.createElement("img");
                 img.src = src;
                 img.alt = site.name;
-                img.loading = "lazy";
+                img.loading = "lazy"; img.decoding = "async";
                 img.addEventListener("error", function() {
                     ph.className = "photo-thumb placeholder";
                     ph.style.background = "linear-gradient(135deg,#2c1810,#4a3020)";
@@ -491,6 +540,7 @@ function buildPhotoGallery(site) {
     // ---- Lightbox ----
     function openLightbox(photos, idx) {
         stopSliderAutoplay();
+        stopDrawerAutoplay();
         lbPhotos = photos;
         lbIdx = idx;
         lightboxImg.src = photos[idx];
@@ -513,22 +563,32 @@ function buildPhotoGallery(site) {
     var lbNextBtn = document.querySelector(".lightbox-next");
     if (lbPrevBtn) lbPrevBtn.addEventListener("click", lbPrev);
     if (lbNextBtn) lbNextBtn.addEventListener("click", lbNext);
+    if (lightboxImg) lightboxImg.addEventListener("error", function() {
+        lightboxImg.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="#1a1410"/><text x="50%" y="50%" fill="#9a8c7a" font-size="16" text-anchor="middle">\u56FE\u7247\u52A0\u8F7D\u5931\u8D25</text></svg>');
+    });
 
     // ---- Dialog close ----
     if (dialogClose) dialogClose.addEventListener("click", function() { infoOverlay.classList.remove("visible"); if (subGallerySection) subGallerySection.style.display = "none"; stopSliderAutoplay(); });
-    infoOverlay.addEventListener("click", function(e) { if (e.target === infoOverlay) infoOverlay.classList.remove("visible"); if (subGallerySection) subGallerySection.style.display = "none"; stopSliderAutoplay(); });
+    infoOverlay.addEventListener("click", function(e) {
+        if (e.target !== infoOverlay) return;
+        infoOverlay.classList.remove("visible");
+        if (subGallerySection) subGallerySection.style.display = "none";
+        stopSliderAutoplay();
+    });
 
     // ---- Mobile drawer ----
     function showMobileDrawer(site) {
         drawerTitle.textContent = site.name;
         drawerDesc.textContent = site.desc;
         drawerPhotos.innerHTML = "";
+        buildDrawerSlider(site);
+        drawerPhotos.style.display = (site.photos && site.photos.length > 0) ? "flex" : "none";
         if (site.photos && site.photos.length > 0) {
             site.photos.slice(0, 8).forEach(function(src) {
                 var img = document.createElement("img");
                 img.src = src;
                 img.alt = site.name;
-                img.loading = "lazy";
+                img.loading = "lazy"; img.decoding = "async";
                 img.addEventListener("click", function() {
                     var i = site.photos.indexOf(src);
                     openLightbox(site.photos, i >= 0 ? i : 0);
@@ -538,15 +598,153 @@ function buildPhotoGallery(site) {
             });
         }
         mobileDrawer.classList.add("open");
+        if (drawerScrim) drawerScrim.classList.add("visible");
         console.log("Mobile drawer: " + site.name);
     }
 
     if (drawerDetailBtn) drawerDetailBtn.addEventListener("click", function() {
         if (!currentSite) return;
-        isMobile = false;
         showInfoDialog(currentSite);
         mobileDrawer.classList.remove("open");
     });
+
+    // ---- 点位快速切换（上一个/下一个） ----
+    function switchSite(dir) {
+        if (!currentSite) return;
+        var i = SITES.findIndex(function(s) { return s.id === currentSite.id; });
+        if (i < 0) return;
+        var n = (i + dir + SITES.length) % SITES.length;
+        var wrapped = (dir === 1 && n === 0) || (dir === -1 && n === SITES.length - 1);
+        selectSite(SITES[n].id);
+        if (wrapped) toastMsg(dir === 1 ? "已回到起点：双坪村" : "已到终点：红军崖纪念碑");
+    }
+    if (dialogPrevSite) dialogPrevSite.addEventListener("click", function() { switchSite(-1); });
+    if (dialogNextSite) dialogNextSite.addEventListener("click", function() { switchSite(1); });
+    if (drawerPrevSite) drawerPrevSite.addEventListener("click", function() { switchSite(-1); });
+    if (drawerNextSite) drawerNextSite.addEventListener("click", function() { switchSite(1); });
+
+    // ---- 移动端抽屉自动轮播 ----
+    var dIdx = 0, dTotal = 0, dAutoplay = null;
+    function stopDrawerAutoplay() {
+        if (dAutoplay) { clearInterval(dAutoplay); dAutoplay = null; }
+        if (drawerPlayToggle) drawerPlayToggle.textContent = "\u25B6";
+    }
+    function startDrawerAutoplay() {
+        stopDrawerAutoplay();
+        if (dTotal <= 1) return;
+        dAutoplay = setInterval(function() {
+            dIdx = (dIdx + 1) % dTotal;
+            dGo(dIdx, false);
+        }, 6000);
+        if (drawerPlayToggle) drawerPlayToggle.textContent = "\u23F8";
+    }
+    function drawerEnsure(i) {
+        if (!drawerSliderTrack || dTotal === 0) return;
+        [i, i + 1].forEach(function(n) {
+            if (n < 0 || n >= dTotal) return;
+            var slide = drawerSliderTrack.children[n];
+            if (!slide) return;
+            var img = slide.querySelector("img");
+            if (img && img.getAttribute("data-src") && !img.getAttribute("src")) {
+                img.src = img.getAttribute("data-src");
+            }
+        });
+    }
+    function dGo(idx, user) {
+        if (dTotal === 0) return;
+        dIdx = Math.max(0, Math.min(idx, dTotal - 1));
+        if (drawerSliderTrack) drawerSliderTrack.style.transform = "translateX(-" + (dIdx * 100) + "%)";
+        if (drawerSliderCounter) drawerSliderCounter.textContent = (dIdx + 1) + " / " + dTotal;
+        var dots = drawerSliderDots ? drawerSliderDots.querySelectorAll(".dot") : [];
+        dots.forEach(function(d, i) { d.classList.toggle("active", i === dIdx); });
+        drawerEnsure(dIdx);
+        if (user) stopDrawerAutoplay();
+    }
+    function dPrev(e) { if (e) e.stopPropagation(); if (dTotal === 0) return; dGo((dIdx - 1 + dTotal) % dTotal, true); }
+    function dNext(e) { if (e) e.stopPropagation(); if (dTotal === 0) return; dGo((dIdx + 1) % dTotal, true); }
+    if (drawerSliderPrev) drawerSliderPrev.addEventListener("click", dPrev);
+    if (drawerSliderNext) drawerSliderNext.addEventListener("click", dNext);
+    if (drawerPlayToggle) drawerPlayToggle.addEventListener("click", function() {
+        if (dAutoplay) { stopDrawerAutoplay(); } else { startDrawerAutoplay(); }
+    });
+    var dtsX = 0;
+    if (drawerSliderTrack) {
+        drawerSliderTrack.addEventListener("touchstart", function(e) { dtsX = e.changedTouches[0].screenX; stopDrawerAutoplay(); }, {passive: true});
+        drawerSliderTrack.addEventListener("touchend", function(e) {
+            var diff = dtsX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 40) { if (diff > 0) dNext(e); else dPrev(e); }
+        }, {passive: true});
+    }
+    function buildDrawerSlider(site) {
+        if (!drawerSliderTrack) return;
+        drawerSliderTrack.innerHTML = "";
+        if (drawerSliderDots) drawerSliderDots.innerHTML = "";
+        dIdx = 0; dTotal = 0; stopDrawerAutoplay();
+        var photos = site.photos || [];
+        if (photos.length === 0) {
+            drawerSliderTrack.innerHTML = '<div class="drawer-empty"><span style="font-size:1.6rem">\u{1F4DA}</span><span>\u8BE5\u70B9\u4F4D\u4E3A\u8BFE\u7A0B\u6D3B\u52A8\u5C55\u793A\uFF0C\u70B9\u51FB\u4E0B\u65B9\u6309\u94AE\u67E5\u770B\u8BFE\u7A0B\u7167\u7247</span></div>';
+            if (drawerSliderCounter) drawerSliderCounter.textContent = "0 / 0";
+            return;
+        }
+        var maxSlides = Math.min(photos.length, 50);
+        for (var i = 0; i < maxSlides; i++) {
+            var slide = document.createElement("div");
+            slide.className = "photo-slider-slide";
+            var img = document.createElement("img");
+            img.setAttribute("data-src", photos[i]);
+            img.alt = site.name + " - " + (i + 1);
+            img.decoding = "async";
+            (function(idx) {
+                img.addEventListener("click", function(e) { e.stopPropagation(); openLightbox(photos, idx); });
+                img.addEventListener("error", function() {
+                    var sl = this.closest(".photo-slider-slide");
+                    if (sl) sl.classList.add("img-error");
+                    this.style.display = "none";
+                });
+            })(i);
+            slide.appendChild(img);
+            drawerSliderTrack.appendChild(slide);
+            if (drawerSliderDots) {
+                var dot = document.createElement("span");
+                dot.className = "dot" + (i === 0 ? " active" : "");
+                (function(idx) { dot.addEventListener("click", function() { dGo(idx, true); }); })(i);
+                drawerSliderDots.appendChild(dot);
+            }
+        }
+        dTotal = maxSlides;
+        if (drawerSliderCounter) drawerSliderCounter.textContent = "1 / " + dTotal;
+        drawerEnsure(0);
+        startDrawerAutoplay();
+    }
+
+    // ---- 移动端抽屉关闭（按钮/遮罩/下拉） ----
+    function closeDrawer() {
+        mobileDrawer.classList.remove("open");
+        if (drawerScrim) drawerScrim.classList.remove("visible");
+        stopDrawerAutoplay();
+        document.querySelectorAll(".hotspot,.route-card,.mobile-nav-item").forEach(function(el) { el.classList.remove("active"); });
+        currentSite = null;
+    }
+    if (drawerCloseBtn) drawerCloseBtn.addEventListener("click", closeDrawer);
+    if (drawerScrim) drawerScrim.addEventListener("click", closeDrawer);
+    var dDragY = null, dDragging = false;
+    if (drawerHandle) {
+        drawerHandle.addEventListener("touchstart", function(e) { dDragY = e.touches[0].clientY; dDragging = false; mobileDrawer.classList.add("dragging"); }, {passive: true});
+        drawerHandle.addEventListener("touchmove", function(e) {
+            if (dDragY === null) return;
+            var dy = e.touches[0].clientY - dDragY;
+            if (dy > 0) { dDragging = true; mobileDrawer.style.transform = "translateY(" + dy + "px)"; }
+        }, {passive: true});
+        drawerHandle.addEventListener("touchend", function(e) {
+            if (dDragY === null) return;
+            var dy = (e.changedTouches && e.changedTouches[0] ? e.changedTouches[0].clientY : dDragY) - dDragY;
+            mobileDrawer.classList.remove("dragging");
+            mobileDrawer.style.transform = "";
+            dDragY = null;
+            if (dDragging && dy > 70) closeDrawer();
+            dDragging = false;
+        }, {passive: true});
+    }
 
     // ---- AI Q&A ----
     function resetAI() { aiAnswer.classList.remove("visible", "loading"); aiAnswer.textContent = ""; }
@@ -655,6 +853,8 @@ function buildPhotoGallery(site) {
         btnTour.classList.add("btn-outline");
         infoOverlay.classList.remove("visible"); if (subGallerySection) subGallerySection.style.display = "none"; stopSliderAutoplay();
         mobileDrawer.classList.remove("open");
+        if (drawerScrim) drawerScrim.classList.remove("visible");
+        stopDrawerAutoplay();
         document.querySelectorAll(".hotspot,.route-card,.mobile-nav-item").forEach(function(el) { el.classList.remove("active"); });
         currentSite = null;
         if (mapHint) { mapHint.style.opacity = "1"; hintHidden = false; }
@@ -672,6 +872,8 @@ function buildPhotoGallery(site) {
         if (e.key === "Escape") {
             infoOverlay.classList.remove("visible"); if (subGallerySection) subGallerySection.style.display = "none"; stopSliderAutoplay();
             mobileDrawer.classList.remove("open");
+            if (drawerScrim) drawerScrim.classList.remove("visible");
+            stopDrawerAutoplay();
             stopTour();
         }
         if (infoOverlay.classList.contains("visible")) {
